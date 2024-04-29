@@ -10,11 +10,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tiptap/extension-code-block-lowlight": "^2.3.0",
+    "@tiptap/extension-highlight": "^2.3.0",
+    "@tiptap/extension-image": "^2.3.0",
+    "@tiptap/extension-placeholder": "^2.3.0",
     "@tiptap/pm": "^2.3.0",
     "@tiptap/react": "^2.3.0",
     "@tiptap/starter-kit": "^2.3.0",
     "@types/react-router-dom": "^5.3.3",
     "d3": "^7.9.0",
+    "lowlight": "^3.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.0",

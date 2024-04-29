@@ -10,4 +10,34 @@
   font-style: normal;
 }
 
+.tiptap>*+* {
+  @apply mt-3;
+}
 
+.tiptap ul,
+.tiptap ol {
+  @apply pl-4;
+}
+
+.tiptap h1,
+.tiptap h2,
+.tiptap h3,
+.tiptap h4 {
+  @apply leading-tight;
+}
+
+.tiptap pre {
+  @apply bg-black text-white m-3 p-3 box-border rounded-lg;
+}
+
+.tiptap pre code {
+  @apply bg-black text-white font-mono text-[0.8rem];
+}
+
+.tiptap code {
+  @apply bg-orange-200 text-red-500 rounded-md box-border px-2;
+}
+
+.tiptap blockquote {
+  @apply pl-[1rem] border-l-4 border-gray-500;
+}
