@@ -1,11 +1,13 @@
-import './App.css'
+import { RouterProvider } from "react-router-dom";
+import router from "./routes/route";
+import "./App.css";
 
 const App = () => {
   return (
     <div>
-    하이
-  </div>)
-}
+      <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />
+    </div>
+  );
+};
 
-
-export default App
+export default App;

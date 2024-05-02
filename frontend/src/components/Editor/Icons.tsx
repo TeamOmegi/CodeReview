@@ -1,5 +1,5 @@
-import { Editor } from '@tiptap/react';
-import ToolbarIcon from './ToolbarIcon';
+import { Editor } from "@tiptap/react";
+import ToolbarIcon from "./ToolbarIcon";
 
 interface IconProps {
   editor: Editor;
@@ -9,9 +9,12 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-        className={editor.isActive('heading', { level: 1 }) ? ToolbarIcon.isH1 : ToolbarIcon.isNotH1}
-      >
-      </button>
+        className={
+          editor.isActive("heading", { level: 1 })
+            ? ToolbarIcon.isH1
+            : ToolbarIcon.isNotH1
+        }
+      ></button>
     );
   };
 
@@ -19,9 +22,12 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-        className={editor.isActive('heading', { level: 2 }) ? ToolbarIcon.isH2 : ToolbarIcon.isNotH2}
-      >
-      </button>
+        className={
+          editor.isActive("heading", { level: 2 })
+            ? ToolbarIcon.isH2
+            : ToolbarIcon.isNotH2
+        }
+      ></button>
     );
   };
 
@@ -29,9 +35,12 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={editor.isActive('heading', { level: 3 }) ? ToolbarIcon.isH3 : ToolbarIcon.isNotH3}
-      >
-      </button>
+        className={
+          editor.isActive("heading", { level: 3 })
+            ? ToolbarIcon.isH3
+            : ToolbarIcon.isNotH3
+        }
+      ></button>
     );
   };
 
@@ -39,9 +48,12 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-        className={editor.isActive('heading', { level: 4 }) ? ToolbarIcon.isH4 : ToolbarIcon.isNotH4}
-      >
-      </button>
+        className={
+          editor.isActive("heading", { level: 4 })
+            ? ToolbarIcon.isH4
+            : ToolbarIcon.isNotH4
+        }
+      ></button>
     );
   };
 
@@ -49,16 +61,11 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleBold().run()}
-        disabled={
-          !editor.can()
-            .chain()
-            .focus()
-            .toggleBold()
-            .run()
+        disabled={!editor.can().chain().focus().toggleBold().run()}
+        className={
+          editor.isActive("bold") ? ToolbarIcon.isBold : ToolbarIcon.isNotBold
         }
-        className={editor.isActive('bold') ? ToolbarIcon.isBold : ToolbarIcon.isNotBold}
-      >
-      </button>
+      ></button>
     );
   };
 
@@ -66,16 +73,13 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleItalic().run()}
-        disabled={
-          !editor.can()
-            .chain()
-            .focus()
-            .toggleItalic()
-            .run()
+        disabled={!editor.can().chain().focus().toggleItalic().run()}
+        className={
+          editor.isActive("italic")
+            ? ToolbarIcon.isItalic
+            : ToolbarIcon.isNotItailic
         }
-        className={editor.isActive('italic') ? ToolbarIcon.isItalic : ToolbarIcon.isNotItailic}
-      >
-      </button>
+      ></button>
     );
   };
 
@@ -83,16 +87,13 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleStrike().run()}
-        disabled={
-          !editor.can()
-            .chain()
-            .focus()
-            .toggleStrike()
-            .run()
+        disabled={!editor.can().chain().focus().toggleStrike().run()}
+        className={
+          editor.isActive("strike")
+            ? ToolbarIcon.isStrike
+            : ToolbarIcon.isNotStrike
         }
-        className={editor.isActive('strike') ? ToolbarIcon.isStrike : ToolbarIcon.isNotStrike}
-      >
-      </button>
+      ></button>
     );
   };
 
@@ -100,16 +101,11 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleCode().run()}
-        disabled={
-          !editor.can()
-            .chain()
-            .focus()
-            .toggleCode()
-            .run()
+        disabled={!editor.can().chain().focus().toggleCode().run()}
+        className={
+          editor.isActive("strike") ? ToolbarIcon.isCode : ToolbarIcon.isNotCode
         }
-        className={editor.isActive('strike') ? ToolbarIcon.isCode : ToolbarIcon.isNotCode}
-      >
-      </button>
+      ></button>
     );
   };
 
@@ -117,9 +113,12 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-        className={editor.isActive('codeBlock') ? ToolbarIcon.isCodeBlock : ToolbarIcon.isNotCodeBlock}
-      >
-      </button>
+        className={
+          editor.isActive("codeBlock")
+            ? ToolbarIcon.isCodeBlock
+            : ToolbarIcon.isNotCodeBlock
+        }
+      ></button>
     );
   };
 
@@ -127,19 +126,20 @@ export namespace Icon {
     return (
       <button
         onClick={() => editor.chain().focus().toggleBlockquote().run()}
-        className={editor.isActive('blockquote') ? ToolbarIcon.isQuote : ToolbarIcon.isNotQuote}
-      >
-      </button>
+        className={
+          editor.isActive("blockquote")
+            ? ToolbarIcon.isQuote
+            : ToolbarIcon.isNotQuote
+        }
+      ></button>
     );
   };
 
   // 미정
   export const AddPhoto = ({ editor }: IconProps) => {
-    const onClick = () => {
-
-    };
+    const onClick = () => {};
 
     return <button onClick={onClick}>Add Photo</button>;
   };
-}   
+}
 export default Icon;

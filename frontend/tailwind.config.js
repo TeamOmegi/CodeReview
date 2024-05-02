@@ -33,6 +33,7 @@ module.exports = {
           '900': '#303c49',
           '950': '#1c2127',
         },
+        'base' : '#171821'
       },
       fontFamily:{
         'sans': ['Pretendard-Regular', 'sans-serif'],
