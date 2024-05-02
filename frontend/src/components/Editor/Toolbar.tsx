@@ -1,5 +1,5 @@
-import { Editor } from '@tiptap/react';
-import { Icon } from './Icons';
+import { Editor } from "@tiptap/react";
+import { Icon } from "./Icons";
 
 interface ToolBarProps {
   editor: Editor | null;
@@ -9,7 +9,7 @@ function ToolBar({ editor }: ToolBarProps) {
   if (!editor) return null;
 
   return (
-    <div className="flex items-center justify-center p-6 py-3 border-b-2 sm:gap-5">
+    <div className="flex w-full items-center justify-center border-b-2 p-6 py-3 sm:gap-5">
       <div className="flex items-center justify-center gap-2">
         <Icon.H1 editor={editor} />
         <Icon.H2 editor={editor} />

@@ -9,6 +9,7 @@ import NoteGraph from "../components/MyNote/NoteGraph/NoteGraph";
 import NoteList from "../components/MyNote/NoteList/NoteList";
 import MainPage from "../pages/MainPage";
 import IndexPage from "../pages/IndexPage";
+import MyNoteDetailPage from "../pages/MyNoteDetailPage";
 
 const router = createBrowserRouter([
   {
@@ -47,7 +48,7 @@ const router = createBrowserRouter([
       },
       {
         path: "myNote/:noteId",
-        element: <DashBoardPage />,
+        element: <MyNoteDetailPage />,
       },
       {
         path: "error",

@@ -1,14 +1,16 @@
-<<<<<<< HEAD
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useEditorStore from "../../store/useEditorStore";
 
 const NavBar = () => {
   const [isClick, setIsClick] = useState<string>("대시보드");
   const navigate = useNavigate();
+  const { setShowNote } = useEditorStore();
+
   const btnClick =
     "my-2 flex h-16 w-4/5 items-center justify-center rounded-xl bg-primary-400 hover:cursor-pointer";
   const btnNoClick =
-    "my-2 flex h-16 w-4/5 items-center justify-center rounded-xl bg-base text-white hover:cursor-pointer";
+    "my-2 flex h-16 w-4/5 items-center justify-center rounded-xl bg-main-100 text-white hover:cursor-pointer";
 
   const handleDashBoardClick = () => {
     setIsClick("대시보드");
@@ -35,8 +37,12 @@ const NavBar = () => {
     navigate("/omegi/setting");
   };
 
+  const hadleNoteClick = () => {
+    setShowNote();
+  };
+
   return (
-    <div className="flex h-full w-1/6 flex-col bg-slate-500">
+    <div className="flex h-full w-full flex-col bg-slate-500">
       <div className="flex h-1/6 items-center justify-center">
         <div className="text-4xl font-extrabold">Omegi</div>
       </div>
@@ -72,17 +78,17 @@ const NavBar = () => {
           <div>설정</div>
         </div>
       </div>
-      <div className="h-1/6"> 로그인 </div>
+      <div className="h-1/6 w-full">
+        <div
+          className="h-1/3 w-full hover:cursor-pointer"
+          onClick={hadleNoteClick}
+        >
+          노트 버튼
+        </div>
+        <div className="h-2/3 w-full">로그인</div>
+      </div>
     </div>
   );
 };
 
 export default NavBar;
-=======
-
-const NavBar = () => {
-
-}
-
-export default NavBar;
->>>>>>> 151d930a092ccb6bb0d38d5747b39dc7c95d044c

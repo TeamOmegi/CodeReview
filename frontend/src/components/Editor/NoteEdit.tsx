@@ -1,5 +1,5 @@
 const NoteEdit = () => {
-  return <div>NoteEdit</div>;
+  return <div className="bg-default"></div>;
 };
 
 export default NoteEdit;

@@ -1,16 +1,16 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @font-face {
-  font-family: 'Pretendard-Regular';
-  src: url('https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+  font-family: "Pretendard-Regular";
+  src: url("https://cdn.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff")
+    format("woff");
   font-weight: 400;
   font-style: normal;
 }
 
-.tiptap>*+* {
+.tiptap > * + * {
   @apply mt-3;
 }
 
@@ -27,17 +27,23 @@
 }
 
 .tiptap pre {
-  @apply bg-black text-white m-3 p-3 box-border rounded-lg;
+  @apply m-3 box-border rounded-lg bg-black p-3 text-white;
 }
 
 .tiptap pre code {
-  @apply bg-black text-white font-mono text-[0.8rem];
+  @apply bg-black font-mono text-[0.8rem] text-white;
 }
 
 .tiptap code {
-  @apply bg-orange-200 text-red-500 rounded-md box-border px-2;
+  @apply box-border rounded-md bg-orange-200 px-2 text-red-500;
 }
 
 .tiptap blockquote {
-  @apply pl-[1rem] border-l-4 border-gray-500;
+  @apply border-l-4 border-gray-500 pl-[1rem];
+}
+
+@layer components {
+  .bg-default {
+    @apply bg-main-200 h-full w-full rounded-3xl;
+  }
 }
