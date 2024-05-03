@@ -55,7 +55,7 @@ module.exports = {
             borderRadius: "20px",
           },
           "&::-webkit-scrollbar-thumb": {
-            background: "rgba(255, 255, 255, 0.3)",
+            background: "rgba(0, 0, 0, 0.1)",
             borderRadius: "20px",
             backgroundClip: "padding-box",
             border: "6px solid transparent",
