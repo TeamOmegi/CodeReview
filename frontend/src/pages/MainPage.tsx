@@ -20,12 +20,12 @@ const MainPage = () => {
   // }, [showNote, noteType]);
 
   return (
-    <div className="bg-main-100 flex h-svh w-screen overflow-hidden">
-      <div className="h-full w-2/12 flex-shrink-0 text-white">
+    <div className="flex h-svh w-screen overflow-hidden bg-main-100">
+      <div className="h-full w-[15%] flex-shrink-0 text-white">
         <NavBar />
       </div>
       <div
-        className={`box-border h-full ${showNote ? "w-5/12" : "w-10/12"} p-5 transition-all duration-1000`}
+        className={`box-border h-full ${showNote ? "w-5/12" : "w-[85%]"} p-5 transition-all duration-1000`}
       >
         <Outlet />
       </div>
