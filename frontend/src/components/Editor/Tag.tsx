@@ -1,9 +1,12 @@
 import { useRef, useState } from "react";
 
-const Tag = () => {
-  const tagRef = useRef<HTMLDivElement | null>(null);
+interface Props {
+  handleChangeData(data: string[]): void;
+}
+
+const Tag = ({ handleChangeData }: Props) => {
   const [tagName, setTagName] = useState<string>("");
-  const [tagLen, setTagLen] = useState<number>(0);
+  const [tagData, setTagData] = useState<string[]>([]);
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTagName(e.target.value);
@@ -11,70 +14,48 @@ const Tag = () => {
 
   const handleOnKeyUp = (e: React.KeyboardEvent) => {
     if (e.key == "Enter" && tagName) {
-      if (tagLen > 2) {
+      if (tagData.length >= 3) {
         setTagName("");
         return;
-      } else if (tagLen > 0) {
-        const allTag = Array.from(
-          tagRef.current?.querySelectorAll("div") || [],
-        );
-
-        const isDuplication = allTag.find((tagDiv) => {
-          if (tagDiv.textContent === `# ${tagName}`) {
-            return tagDiv;
-          }
-        });
-
-        if (isDuplication != undefined) {
-          setTagName("");
-          return;
-        }
       }
 
-      const inputTag = tagRef.current?.querySelector("input");
-      const newTag = document.createElement("div");
-      const className =
-        "mr-3 font-light text-orange-500 bg-orange-50 rounded-3xl px-4 hover:cursor-pointer";
-      newTag.textContent = `# ${tagName}`;
-      newTag.className = className;
-      newTag.addEventListener("click", () => {
-        handleTagDelete(newTag);
-      });
-
-      if (inputTag) {
-        tagRef.current?.insertBefore(newTag, inputTag);
+      if (tagData.includes(`# ${tagName}`)) {
         setTagName("");
-        setTagLen(tagLen + 1);
+        return;
       }
+
+      setTagData([...tagData, `# ${tagName}`]);
+      setTagName("");
     } else if (e.key == "Backspace" && tagName == "") {
-      // div 제거하는 코드
-      const lastTag = tagRef.current?.querySelector("input")?.previousSibling;
-      if (lastTag) {
-        tagRef.current?.removeChild(lastTag);
-        setTagName("");
-        if (tagLen > 0) setTagLen(tagLen - 1);
+      if (tagData.length > 0) {
+        setTagData(tagData.slice(0, -1));
       }
     }
   };
 
-  const handleTagDelete = (tagDiv: HTMLDivElement) => {
-    tagRef.current?.removeChild(tagDiv);
-    const len = tagRef.current?.querySelectorAll("div").length || 0;
-    setTagName("");
-    setTagLen(len);
+  const handleTagDelete = (index: number) => {
+    const newTagData = [...tagData];
+    newTagData.splice(index, 1);
+    setTagData(newTagData);
   };
 
   return (
     <div className="w-[90%] overflow-x-scroll scrollbar-webkit ">
-      <div
-        className="flex h-10 w-full flex-row items-center whitespace-nowrap"
-        ref={tagRef}
-      >
+      <div className="flex h-10 w-full flex-row items-center whitespace-nowrap">
+        {tagData.map((tag, index) => (
+          <div
+            key={index}
+            className="mr-3 rounded-3xl bg-green-100 px-4 py-1 font-light text-green-600 hover:cursor-pointer"
+            onClick={() => handleTagDelete(index)}
+          >
+            {tag}
+          </div>
+        ))}
         <input
           type="text"
           value={tagName}
-          className={` bg-main-200 ml-2 h-7 w-48 text-base tracking-[0.07em]  focus:outline-none ${tagLen == 3 ? "placeholder-rose-500" : "placeholder-[#868E96]"}`}
-          placeholder={`해시태그 입력. (${tagLen}/3)`}
+          className={` ml-2 h-7 w-48 bg-main-200 text-base tracking-[0.07em]  focus:outline-none ${tagData.length === 3 ? "placeholder-red-400" : "placeholder-[#868E96]"}`}
+          placeholder={`해시태그 입력. (${tagData.length}/3)`}
           onChange={handleTagChange}
           onKeyUp={handleOnKeyUp}
         />
