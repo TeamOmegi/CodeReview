@@ -24,11 +24,15 @@ const Tag = ({ handleChangeData }: Props) => {
         return;
       }
 
-      setTagData([...tagData, `# ${tagName}`]);
+      const newTagData = [...tagData, `# ${tagName}`];
       setTagName("");
+      setTagData(newTagData);
+      handleChangeData(newTagData);
     } else if (e.key == "Backspace" && tagName == "") {
       if (tagData.length > 0) {
-        setTagData(tagData.slice(0, -1));
+        const newTagData = tagData.slice(0, -1);
+        setTagData(newTagData);
+        handleChangeData(newTagData);
       }
     }
   };
@@ -37,6 +41,7 @@ const Tag = ({ handleChangeData }: Props) => {
     const newTagData = [...tagData];
     newTagData.splice(index, 1);
     setTagData(newTagData);
+    handleChangeData(newTagData);
   };
 
   return (

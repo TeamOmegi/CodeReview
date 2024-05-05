@@ -13,13 +13,27 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
 import Title from "./Title";
 import { useQuestion, useWarnning } from "../../hooks/useComfirm";
+import { useError } from "../../hooks/useAlert";
+import { noteCreate } from "../../api/editorAxios";
 
-interface NoteProprs {
+interface Props {
   content: string;
 }
 
-const NoteCreate = ({ content }: NoteProprs) => {
+export interface NoteData {
+  title: string;
+  tag: string[];
+  content: string;
+}
+
+const NoteCreate = ({ content }: Props) => {
   const [submitContent, setSubmitContent] = useState<string | undefined>("");
+  const [noteData, setNoteDate] = useState<NoteData>({
+    title: "",
+    tag: [],
+    content: "",
+  });
+
   const lowlight = createLowlight(common);
 
   const editor = useEditor({
@@ -53,15 +67,38 @@ const NoteCreate = ({ content }: NoteProprs) => {
   //   }
   // }, [submitContent]);
 
+  useEffect(() => {
+    console.log("노트 렌더링");
+  }, []);
+
+  const handleChangeData = (data: string | string[]): void => {
+    if (typeof data === "string") {
+      console.log({ ...noteData, title: data });
+      setNoteDate({ ...noteData, title: data });
+    } else if (typeof data === "object") {
+      console.log({ ...noteData, tag: data });
+      setNoteDate({ ...noteData, tag: data });
+    }
+  };
+
   const handleNoteCreate = async () => {
+    if (noteData.title === "") {
+      useError({
+        title: "Create Error",
+        text: "제목을 입력해주세요.",
+      });
+      return;
+    }
+    console.log(noteData);
     const result = await useQuestion({
       title: "Note Create",
       fireText: "Note를 생성하시겠습니까?",
       resultText: "Note가 생성되었습니다.",
     });
 
-    if (result) console.log(editor?.getHTML());
-    else console.log("취소");
+    if (result) {
+      await noteCreate(noteData);
+    }
   };
 
   const handleNoteDelete = async () => {
@@ -77,12 +114,16 @@ const NoteCreate = ({ content }: NoteProprs) => {
 
   return (
     <div className="box-border flex h-full w-full flex-col items-center pb-4 pt-8">
-      <Title />
-      <Tag />
+      <Title handleChangeData={handleChangeData} />
+      <Tag handleChangeData={handleChangeData} />
       <Toolbar editor={editor} />
       <EditorContent
         className="box-border w-full flex-1 overflow-y-scroll px-8 py-4 scrollbar-webkit"
         editor={editor}
+        onBlur={() => {
+          console.log("성공!!");
+          setNoteDate({ ...noteData, content: editor?.getHTML() || "" });
+        }}
       />
 
       <div className="flex h-12 w-full items-center justify-end pr-4">
