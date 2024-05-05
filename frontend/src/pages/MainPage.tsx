@@ -29,7 +29,7 @@ const MainPage = () => {
   // }, [showNote, noteType]);
 
   return (
-    <div className="bg-main-100 flex h-svh w-screen overflow-hidden">
+    <div className="flex h-svh w-screen overflow-hidden bg-main-100">
       <div className="h-full w-[15%] flex-shrink-0 text-white">
         <NavBar />
       </div>
@@ -42,7 +42,7 @@ const MainPage = () => {
         className={`box-border h-full ${showNote ? "w-5/12 pr-5" : "w-0"} overflow-hidden py-5 transition-all duration-1000`}
       >
         <div className="bg-default">
-          {noteType === "create" && <NoteCreate content="" />}
+          {noteType === "create" && <NoteCreate />}
           {noteType === "edit" && <NoteEdit />}
         </div>
       </div>

@@ -1,24 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
-import Toolbar from "./Toolbar";
+import Title from "./Title";
 import Tag from "./Tag";
+import Toolbar from "./Toolbar";
 
 //tiptap
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
-import Placeholder from "@tiptap/extension-placeholder";
 import Image from "@tiptap/extension-image";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
 import { common, createLowlight } from "lowlight";
-import Title from "./Title";
 import { useQuestion, useWarnning } from "../../hooks/useComfirm";
 import { useError } from "../../hooks/useAlert";
 import { noteCreate } from "../../api/editorAxios";
-
-interface Props {
-  content: string;
-}
 
 export interface NoteData {
   title: string;
@@ -26,8 +21,7 @@ export interface NoteData {
   content: string;
 }
 
-const NoteCreate = ({ content }: Props) => {
-  const [submitContent, setSubmitContent] = useState<string | undefined>("");
+const NoteCreate = () => {
   const [noteData, setNoteDate] = useState<NoteData>({
     title: "",
     tag: [],
@@ -45,7 +39,7 @@ const NoteCreate = ({ content }: Props) => {
         lowlight,
       }),
     ],
-    content: content,
+    content: "",
     editorProps: {
       attributes: {
         class:
@@ -53,23 +47,6 @@ const NoteCreate = ({ content }: Props) => {
       },
     },
   });
-
-  useEffect(() => {
-    if (content) {
-      editor?.commands.setContent(content);
-    }
-  }, [content]);
-
-  // useEffect(() => {
-  //   if (submitContent) {
-  //     console.log("적용완료");
-  //     editor?.commands.setContent(submitContent);
-  //   }
-  // }, [submitContent]);
-
-  useEffect(() => {
-    console.log("노트 렌더링");
-  }, []);
 
   const handleChangeData = (data: string | string[]): void => {
     if (typeof data === "string") {
@@ -89,7 +66,7 @@ const NoteCreate = ({ content }: Props) => {
       });
       return;
     }
-    console.log(noteData);
+
     const result = await useQuestion({
       title: "Note Create",
       fireText: "Note를 생성하시겠습니까?",
@@ -114,8 +91,8 @@ const NoteCreate = ({ content }: Props) => {
 
   return (
     <div className="box-border flex h-full w-full flex-col items-center pb-4 pt-8">
-      <Title handleChangeData={handleChangeData} />
-      <Tag handleChangeData={handleChangeData} />
+      <Title iniTitle="" handleChangeData={handleChangeData} />
+      <Tag iniTag={[]} handleChangeData={handleChangeData} />
       <Toolbar editor={editor} />
       <EditorContent
         className="box-border w-full flex-1 overflow-y-scroll px-8 py-4 scrollbar-webkit"

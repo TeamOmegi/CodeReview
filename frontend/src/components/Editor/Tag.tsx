@@ -1,12 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface Props {
+  iniTag: string[];
   handleChangeData(data: string[]): void;
 }
 
-const Tag = ({ handleChangeData }: Props) => {
+const Tag = ({ iniTag, handleChangeData }: Props) => {
   const [tagName, setTagName] = useState<string>("");
   const [tagData, setTagData] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (iniTag.length == 0) return;
+    setTagData([...iniTag]);
+  }, [iniTag]);
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTagName(e.target.value);

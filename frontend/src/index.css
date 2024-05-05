@@ -11,7 +11,7 @@
 }
 
 .tiptap > * + * {
-  @apply mt-3;
+  @apply mt-1;
 }
 
 .tiptap ul,
@@ -19,15 +19,24 @@
   @apply pl-4;
 }
 
-.tiptap h1,
-.tiptap h2,
-.tiptap h3,
+.tiptap h1 {
+  @apply text-4xl font-black;
+}
+
+.tiptap h2 {
+  @apply text-3xl font-bold;
+}
+
+.tiptap h3 {
+  @apply text-2xl font-semibold;
+}
+
 .tiptap h4 {
-  @apply leading-tight;
+  @apply text-xl font-medium;
 }
 
 .tiptap pre {
-  @apply m-3 box-border rounded-lg bg-black p-3 text-white;
+  @apply box-border rounded-lg bg-black p-3 text-white;
 }
 
 .tiptap pre code {
@@ -35,15 +44,15 @@
 }
 
 .tiptap code {
-  @apply box-border rounded-md bg-orange-200 px-2 text-red-500;
+  @apply box-border rounded-md bg-orange-200 text-red-500;
 }
 
 .tiptap blockquote {
-  @apply border-l-4 border-gray-500 pl-[1rem];
+  @apply border-l-4 border-gray-500 pl-4;
 }
 
 @layer components {
   .bg-default {
-    @apply bg-main-200 h-full w-full rounded-3xl;
+    @apply h-full w-full rounded-3xl bg-main-200;
   }
 }
