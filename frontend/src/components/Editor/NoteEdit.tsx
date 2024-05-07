@@ -13,7 +13,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
 import { useQuestion } from "../../hooks/useComfirm";
 import { useError } from "../../hooks/useAlert";
-import { getNoteData, noteCreate } from "../../api/editorAxios";
+import { getNoteData, noteCreate } from "../../api/myNoteAxios";
 import { useParams } from "react-router-dom";
 
 export interface NoteData {

@@ -13,7 +13,7 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
 import { useQuestion, useWarnning } from "../../hooks/useComfirm";
 import { useError } from "../../hooks/useAlert";
-import { noteCreate } from "../../api/editorAxios";
+import { noteCreate } from "../../api/myNoteAxios";
 
 export interface NoteData {
   title: string;
