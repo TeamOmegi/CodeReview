@@ -2,15 +2,21 @@ import { useEffect, useState } from "react";
 
 interface Props {
   iniTitle: string;
+  resetToggle?: boolean;
   handleChangeData(data: string): void;
 }
-const Title = ({ iniTitle, handleChangeData }: Props) => {
+const Title = ({ iniTitle, resetToggle, handleChangeData }: Props) => {
   const [title, setTitle] = useState<string>("");
 
   useEffect(() => {
     if (iniTitle === "") return;
     setTitle(iniTitle);
   }, [iniTitle]);
+
+  useEffect(() => {
+    setTitle("");
+    handleChangeData("");
+  }, [resetToggle]);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);

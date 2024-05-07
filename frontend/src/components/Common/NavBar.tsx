@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useWarnning2 } from "../../hooks/useComfirm";
 import useEditorStore from "../../store/useEditorStore";
 
 const NavBar = () => {
-  const [isClick, setIsClick] = useState<string>("대시보드");
-  const navigate = useNavigate();
+  const [isClick, setIsClick] = useState<string>("");
   const location = useLocation();
-  const { setShowNote } = useEditorStore();
+  const navigate = useNavigate();
+  const { showNote, noteType, setShowNote, setNoteType } = useEditorStore();
   const [isHovered, setIsHovered] = useState(false);
 
   const btnClick =
@@ -15,33 +16,48 @@ const NavBar = () => {
     "flex h-12 w-full items-center justify-start rounded-xl text-primary-100 hover:border border-primary-400 hover:cursor-pointer";
 
   const handleDashBoardClick = () => {
-    setIsClick("대시보드");
+    setIsClick("/omegi");
     navigate("/omegi");
   };
 
   const handleMyNoteClick = () => {
-    setIsClick("내노트");
+    setIsClick("/omegi/myNote");
     navigate("/omegi/myNote");
   };
 
   const handleAllNoteClick = () => {
-    setIsClick("모아보기");
+    setIsClick("/omegi/allNote");
     navigate("/omegi/allNote");
   };
 
   const handleErrorClick = () => {
-    setIsClick("에러목록");
+    setIsClick("/omegi/error");
     navigate("/omegi/error");
   };
 
   const handleSettingClick = () => {
-    setIsClick("설정");
+    setIsClick("/omegi/setting");
     navigate("/omegi/setting");
   };
 
-  const hadleNoteClick = () => {
+  const hadleNoteClick = async () => {
+    if (noteType === "edit") {
+      const result = await useWarnning2({
+        title: "새 노트를 작성하시겠습니까?",
+        fireText: "이전 변경사항은 저장되지 않습니다.",
+      });
+
+      if (result) {
+        setNoteType("create");
+      }
+      return;
+    }
     setShowNote();
   };
+
+  useEffect(() => {
+    setIsClick(location.pathname);
+  }, []);
 
   return (
     <div className="flex h-full w-full">
@@ -53,7 +69,7 @@ const NavBar = () => {
         </div>
         <div className="m-3 mt-28 flex h-4/6 flex-col items-center pl-1 text-base">
           <div
-            className={isClick === "대시보드" ? btnClick : btnNoClick}
+            className={isClick === "/omegi" ? btnClick : btnNoClick}
             onClick={handleDashBoardClick}
           >
             <div className="ml-5 flex items-center justify-center">
@@ -61,7 +77,7 @@ const NavBar = () => {
                 className="mr-4 h-5 w-5"
                 alt="Dashboard_Icon"
                 src={
-                  isClick === "대시보드"
+                  isClick === "/omegi"
                     ? "/icons/DashboardIcon_b.png"
                     : "/icons/DashboardIcon.png"
                 }
@@ -70,7 +86,7 @@ const NavBar = () => {
             </div>
           </div>
           <div
-            className={isClick === "내노트" ? btnClick : btnNoClick}
+            className={isClick === "/omegi/myNote" ? btnClick : btnNoClick}
             onClick={handleMyNoteClick}
           >
             <div className="ml-5 flex items-center justify-center">
@@ -78,7 +94,7 @@ const NavBar = () => {
                 className="mr-4 h-5 w-5"
                 alt="Mynote_Icon"
                 src={
-                  isClick === "내노트"
+                  isClick === "/omegi/myNote"
                     ? "/icons/MynoteIcon_b.png"
                     : "/icons/MynoteIcon.png"
                 }
@@ -87,7 +103,7 @@ const NavBar = () => {
             </div>
           </div>
           <div
-            className={isClick === "모아보기" ? btnClick : btnNoClick}
+            className={isClick === "/omegi/allNote" ? btnClick : btnNoClick}
             onClick={handleAllNoteClick}
           >
             <div className="ml-5 flex items-center justify-center">
@@ -95,7 +111,7 @@ const NavBar = () => {
                 className="mr-4 h-5 w-5"
                 alt="Allnote_Icon"
                 src={
-                  isClick === "모아보기"
+                  isClick === "/omegi/allNote"
                     ? "/icons/AllnoteIcon_b.png"
                     : "/icons/AllnoteIcon.png"
                 }
@@ -104,7 +120,7 @@ const NavBar = () => {
             </div>
           </div>
           <div
-            className={isClick === "에러목록" ? btnClick : btnNoClick}
+            className={isClick === "/omegi/error" ? btnClick : btnNoClick}
             onClick={handleErrorClick}
           >
             <div className="ml-5 flex items-center justify-center">
@@ -112,7 +128,7 @@ const NavBar = () => {
                 className="mr-4 h-5 w-5"
                 alt="Error_Icon"
                 src={
-                  isClick === "에러목록"
+                  isClick === "/omegi/error"
                     ? "/icons/ErrorIcon_b.png"
                     : "/icons/ErrorIcon.png"
                 }
@@ -121,7 +137,7 @@ const NavBar = () => {
             </div>
           </div>
           <div
-            className={isClick === "설정" ? btnClick : btnNoClick}
+            className={isClick === "/omegi/setting" ? btnClick : btnNoClick}
             onClick={handleSettingClick}
           >
             <div className="ml-5 flex items-center justify-center">
@@ -129,7 +145,7 @@ const NavBar = () => {
                 className="mr-4 h-5 w-5"
                 alt="Setting_Icon"
                 src={
-                  isClick === "설정"
+                  isClick === "/omegi/setting"
                     ? "/icons/SettingIcon_b.png"
                     : "/icons/SettingIcon.png"
                 }

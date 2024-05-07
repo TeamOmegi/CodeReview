@@ -9,6 +9,8 @@ import Highlight from "@tiptap/extension-highlight";
 import Image from "@tiptap/extension-image";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import { common, createLowlight } from "lowlight";
+import useEditorStore from "../store/useEditorStore";
+import { useWarnning2 } from "../hooks/useComfirm";
 
 interface ErrorInfo {
   errorId: number;
@@ -29,6 +31,8 @@ interface NoteDetail {
 
 const MyNoteDetailPage = () => {
   const noteId = parseInt(useParams().noteId || "-1");
+  const { showNote, noteType, isWriting, setShowNote, setNoteType } =
+    useEditorStore();
   const [note, setNote] = useState<NoteDetail | null>({
     noteId: 1,
     title: "여기는 My..Note..Detail이다.. ",
@@ -80,15 +84,44 @@ const MyNoteDetailPage = () => {
     },
   });
 
+  const handleNoteEdit = async () => {
+    if (noteType === "create") {
+      if (isWriting) {
+        const result = await useWarnning2({
+          title: "노트를 수정하시겠습니까?",
+          fireText: "이전 변경사항은 저장되지 않습니다.",
+        });
+
+        if (result) {
+          if (!showNote) setShowNote();
+          setNoteType("edit");
+        }
+        return;
+      } else {
+        if (!showNote) setShowNote();
+        setNoteType("edit");
+      }
+    }
+  };
+
+  const handleNoteDelete = () => {};
+
   return (
     <div className="bg-default">
       <div className="box-border flex h-full w-full flex-col rounded-xl p-10 text-black">
-        <div className="flex h-[20%] w-full flex-col  border-b-2 ">
+        <div className="flex h-[15%] w-full flex-col  border-b-2 ">
           <div className="ml-2 mt-10 flex items-center justify-start text-3xl font-bold">
             <h2>note.title </h2>
           </div>
-          <div className="text-md mr-5 box-border flex justify-end p-2">
-            <p className="mr-2">{note?.createdAt}</p>
+          <div className="text-md mr-5 box-border flex justify-end p-2 ">
+            <p className="mx-2">{note?.createdAt}</p>
+            <p
+              className="mx-2 text-gray-500 hover:cursor-pointer"
+              onClick={handleNoteEdit}
+            >
+              수정
+            </p>
+            <p className="hover:cusor-pointer mx-2 text-red-400">삭제</p>
           </div>
         </div>
         <hr />

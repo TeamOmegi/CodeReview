@@ -5,7 +5,7 @@ const BASE_URL = "";
 //Note
 export interface Note {
   title: string;
-  tag: string[];
+  tags: string[];
   content: string;
 }
 
@@ -59,5 +59,16 @@ export const noteEdit = async (noteId: number, noteData: Note) => {
     console.log(response, "Success NoteEdit");
   } catch (error) {
     console.error(error, "Fail NoteEdit");
+  }
+};
+
+// 노트 삭제
+export const noteDelete = async (noteId: number) => {
+  console.log("전달완료: ", noteId);
+  try {
+    const response = await axios.delete(`${BASE_URL}/${noteId}`);
+    console.log(response, "Success NoteDelete");
+  } catch (error) {
+    console.error(error, "Fail NoteDelete");
   }
 };

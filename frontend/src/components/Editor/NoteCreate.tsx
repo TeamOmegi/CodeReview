@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useEditor, EditorContent } from "@tiptap/react";
 import Title from "./Title";
 import Tag from "./Tag";
@@ -14,17 +14,21 @@ import { common, createLowlight } from "lowlight";
 import { useQuestion, useWarnning } from "../../hooks/useComfirm";
 import { useError } from "../../hooks/useAlert";
 import { noteCreate } from "../../api/myNoteAxios";
+import useEditorStore from "../../store/useEditorStore";
 
 export interface NoteData {
   title: string;
-  tag: string[];
+  tags: string[];
   content: string;
 }
 
 const NoteCreate = () => {
+  const [resetToggle, setResetToggle] = useState<boolean>(false);
+  const { setShowNote, setIsWriting } = useEditorStore();
+
   const [noteData, setNoteDate] = useState<NoteData>({
     title: "",
-    tag: [],
+    tags: [],
     content: "",
   });
 
@@ -50,11 +54,9 @@ const NoteCreate = () => {
 
   const handleChangeData = (data: string | string[]): void => {
     if (typeof data === "string") {
-      console.log({ ...noteData, title: data });
       setNoteDate({ ...noteData, title: data });
     } else if (typeof data === "object") {
-      console.log({ ...noteData, tag: data });
-      setNoteDate({ ...noteData, tag: data });
+      setNoteDate({ ...noteData, tags: data });
     }
   };
 
@@ -75,6 +77,8 @@ const NoteCreate = () => {
 
     if (result) {
       await noteCreate(noteData);
+      handleNoteReset();
+      setShowNote();
     }
   };
 
@@ -85,14 +89,64 @@ const NoteCreate = () => {
       resultText: "Note가 초기화되었습니다.",
     });
 
-    if (result) console.log("성공");
-    else console.log("취소");
+    if (result) {
+      handleNoteReset();
+    } else console.log("취소");
   };
 
+  const handleNoteReset = () => {
+    setResetToggle(!resetToggle);
+    editor?.commands.setContent("");
+  };
+
+  const handleNoteLeave = async () => {
+    const result = await useWarnning({
+      title: "NoteCreate Leave",
+      fireText: "Note를 저장하시겠습니까?",
+      resultText: "Note가 저장되었습니다.",
+    });
+
+    if (result) {
+      await noteCreate(noteData);
+      handleNoteReset();
+      setShowNote();
+    } else {
+      handleNoteReset();
+      setShowNote();
+    }
+  };
+
+  useEffect(() => {
+    if (
+      noteData.title === "" &&
+      noteData.tags.length === 0 &&
+      (noteData.content == "<p></p>" || noteData.content == "")
+    ) {
+      setIsWriting(false);
+    } else {
+      setIsWriting(true);
+    }
+  }, [noteData]);
   return (
-    <div className="box-border flex h-full w-full flex-col items-center pb-4 pt-8">
-      <Title iniTitle="" handleChangeData={handleChangeData} />
-      <Tag iniTag={[]} handleChangeData={handleChangeData} />
+    <div className="box-border flex h-full w-full flex-col items-center pb-4 pt-5">
+      <div className="flex w-full items-center justify-end px-5">
+        <img
+          src="/public/icons/Close.png"
+          alt="닫기버튼"
+          className="h-6 w-6 hover:cursor-pointer"
+          onClick={handleNoteLeave}
+        />
+      </div>
+      <Title
+        iniTitle=""
+        resetToggle={resetToggle}
+        handleChangeData={handleChangeData}
+      />
+      <Tag
+        iniTag={[]}
+        resetToggle={resetToggle}
+        handleChangeData={handleChangeData}
+      />
       <Toolbar editor={editor} />
       <EditorContent
         className="box-border w-full flex-1 overflow-y-scroll px-8 py-4 scrollbar-webkit"

@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 
 interface Props {
   iniTag: string[];
+  resetToggle?: boolean;
   handleChangeData(data: string[]): void;
 }
 
-const Tag = ({ iniTag, handleChangeData }: Props) => {
+const Tag = ({ iniTag, resetToggle, handleChangeData }: Props) => {
   const [tagName, setTagName] = useState<string>("");
   const [tagData, setTagData] = useState<string[]>([]);
 
@@ -13,6 +14,11 @@ const Tag = ({ iniTag, handleChangeData }: Props) => {
     if (iniTag.length == 0) return;
     setTagData([...iniTag]);
   }, [iniTag]);
+
+  useEffect(() => {
+    setTagData([]);
+    handleChangeData([]);
+  }, [resetToggle]);
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTagName(e.target.value);
