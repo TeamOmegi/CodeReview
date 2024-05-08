@@ -42,7 +42,7 @@ const MainPage = () => {
         className={`box-border h-full ${showNote ? "w-5/12 pr-5" : "w-0"} overflow-hidden py-5 transition-all duration-1000`}
       >
         <div className="bg-default">
-          {noteType === "create" && <NoteCreate content="" />}
+          {noteType === "create" && <NoteCreate />}
           {noteType === "edit" && <NoteEdit />}
         </div>
       </div>

@@ -3,9 +3,9 @@ import NoteGraph from "../components/MyNote/NoteGraph/NoteGraph";
 const MyNotePage = () => {
   return (
     <div className="bg-default">
-      <div className="flex h-1/6 w-full rounded-xl bg-blue-300 text-2xl">
-        <div className="m-5 flex items-center justify-center bg-amber-400">
-          내 노트
+      <div className="flex h-1/6 w-full rounded-xl bg-blue-300 ">
+        <div className="m-5 flex items-center justify-center text-2xl font-bold">
+          내 노트 📒
         </div>
       </div>
       <div className="flex h-5/6 w-full items-center justify-center rounded-xl">
