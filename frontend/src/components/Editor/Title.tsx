@@ -13,10 +13,10 @@ const Title = () => {
   };
 
   return (
-    <div className="flex w-full px-10 py-3">
+    <div className="flex h-20 w-full px-10">
       <input
         type="text"
-        className=" bg-main-200 h-20 w-full text-4xl font-black tracking-[0.07em] placeholder-[#868E96] focus:outline-none"
+        className=" bg-main-200 h-full w-full text-4xl font-black tracking-[0.07em] placeholder-[#868E96] focus:outline-none"
         placeholder="제목을 입력하세요."
         onChange={(e) => handleTitleChange(e)}
       />

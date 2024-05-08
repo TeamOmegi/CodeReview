@@ -9,7 +9,7 @@ function ToolBar({ editor }: ToolBarProps) {
   if (!editor) return null;
 
   return (
-    <div className="flex w-full items-center border-b-2 px-8 py-2 sm:gap-10">
+    <div className="flex w-full items-center border-b-2 px-8 pb-2 sm:gap-10">
       <div className="flex items-center justify-center gap-3">
         <Icon.H1 editor={editor} />
         <Icon.H2 editor={editor} />

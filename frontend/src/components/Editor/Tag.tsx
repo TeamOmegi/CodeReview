@@ -34,7 +34,7 @@ const Tag = () => {
       const inputTag = tagRef.current?.querySelector("input");
       const newTag = document.createElement("div");
       const className =
-        "mr-3 font-light text-orange-500 bg-orange-50 rounded-3xl py-2 px-4 hover:cursor-pointer";
+        "mr-3 font-light text-orange-500 bg-orange-50 rounded-3xl px-4 hover:cursor-pointer";
       newTag.textContent = `# ${tagName}`;
       newTag.className = className;
       newTag.addEventListener("click", () => {
@@ -65,7 +65,7 @@ const Tag = () => {
   };
 
   return (
-    <div className="w-[90%] overflow-x-scroll  scrollbar-webkit ">
+    <div className="w-[90%] overflow-x-scroll scrollbar-webkit ">
       <div
         className="flex h-10 w-full flex-row items-center whitespace-nowrap"
         ref={tagRef}
@@ -73,7 +73,7 @@ const Tag = () => {
         <input
           type="text"
           value={tagName}
-          className={` bg-main-200 ml-2 h-7 w-48 text-xl tracking-[0.07em]  focus:outline-none ${tagLen == 3 ? "placeholder-rose-500" : "placeholder-[#868E96]"}`}
+          className={` bg-main-200 ml-2 h-7 w-48 text-base tracking-[0.07em]  focus:outline-none ${tagLen == 3 ? "placeholder-rose-500" : "placeholder-[#868E96]"}`}
           placeholder={`해시태그 입력. (${tagLen}/3)`}
           onChange={handleTagChange}
           onKeyUp={handleOnKeyUp}

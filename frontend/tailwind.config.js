@@ -49,6 +49,7 @@ module.exports = {
         ".scrollbar-webkit": {
           "&::-webkit-scrollbar": {
             width: "20px",
+            height: "10px",
           },
           "&::-webkit-scrollbar-track": {
             background: "rgba(255, 255, 255, 0)",
@@ -59,7 +60,7 @@ module.exports = {
             borderRadius: "20px",
             backgroundClip: "padding-box",
             border: "6px solid transparent",
-            height: "20%",
+            height: "90%",
           },
         },
       };
