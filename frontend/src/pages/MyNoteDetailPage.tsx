@@ -1,16 +1,23 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getNoteData } from "../api/myNoteAxios";
+import { getNoteData, noteDelete } from "../api/myNoteAxios";
 import { EditorContent, useEditor } from "@tiptap/react";
 
 //tiptap
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Image from "@tiptap/extension-image";
+
+//lowlight
+import { lowlight } from "lowlight/lib/core";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import { common, createLowlight } from "lowlight";
+import css from "highlight.js/lib/languages/css";
+import js from "highlight.js/lib/languages/javascript";
+import ts from "highlight.js/lib/languages/typescript";
+import html from "highlight.js/lib/languages/xml";
+
 import useEditorStore from "../store/useEditorStore";
-import { useWarnning2 } from "../hooks/useComfirm";
+import { useDanger, useWarnning2 } from "../hooks/useComfirm";
 
 interface ErrorInfo {
   errorId: number;
@@ -48,42 +55,6 @@ const MyNoteDetailPage = () => {
     },
   });
 
-  useEffect(() => {
-    if (noteId === -1) return;
-    const getNoteDetail = async () => {
-      try {
-        const noteDetailData = await getNoteData(noteId);
-        setNote(noteDetailData);
-      } catch (error) {
-        console.error(
-          "노트 상세 정보를 불러오는 중 오류가 발생했습니다:",
-          error,
-        );
-      }
-    };
-    //getNoteDetail();
-  }, [noteId]);
-
-  //tiptap
-  const lowlight = createLowlight(common);
-  const editor = useEditor({
-    extensions: [
-      StarterKit,
-      Highlight,
-      Image.configure({ inline: true, allowBase64: true }),
-      CodeBlockLowlight.configure({
-        lowlight,
-      }),
-    ],
-    content: note?.content,
-    editorProps: {
-      attributes: {
-        class:
-          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl w-full h-full focus:outline-none",
-      },
-    },
-  });
-
   const handleNoteEdit = async () => {
     if (noteType === "create") {
       if (isWriting) {
@@ -104,7 +75,60 @@ const MyNoteDetailPage = () => {
     }
   };
 
-  const handleNoteDelete = () => {};
+  const handleNoteDelete = async () => {
+    const result = await useDanger({
+      title: "노트를 삭제하시겠습니까?",
+      fireText: "영구적으로 삭제됩니다.",
+    });
+
+    if (result) noteDelete(noteId);
+  };
+
+  lowlight.registerLanguage("html", html);
+  lowlight.registerLanguage("css", css);
+  lowlight.registerLanguage("js", js);
+  lowlight.registerLanguage("ts", ts);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Highlight,
+      Image.configure({ inline: true, allowBase64: true }),
+      CodeBlockLowlight.configure({
+        lowlight,
+        HTMLAttributes: {
+          class: "language-js",
+        },
+        languageClassPrefix: "language-",
+        defaultLanguage: "plaintext",
+      }),
+    ],
+    content: note?.content,
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl w-full h-full focus:outline-none",
+      },
+    },
+  });
+
+  useEffect(() => {
+    if (noteId === -1) return;
+    localStorage.setItem("noteId", `${noteId}`);
+
+    const getNoteDetail = async () => {
+      try {
+        const noteDetailData = await getNoteData(noteId);
+        setNote(noteDetailData);
+      } catch (error) {
+        console.error(
+          "노트 상세 정보를 불러오는 중 오류가 발생했습니다:",
+          error,
+        );
+      }
+    };
+    //getNoteDetail();
+  }, [noteId]);
 
   return (
     <div className="bg-default">
@@ -121,7 +145,12 @@ const MyNoteDetailPage = () => {
             >
               수정
             </p>
-            <p className="hover:cusor-pointer mx-2 text-red-400">삭제</p>
+            <p
+              className="hover:cusor-pointer mx-2 text-red-400"
+              onClick={handleNoteDelete}
+            >
+              삭제
+            </p>
           </div>
         </div>
         <hr />

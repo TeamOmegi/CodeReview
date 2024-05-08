@@ -17,25 +17,14 @@ interface Note {
   user: User;
 }
 
-interface ApiResponse {
-  status: number;
-  message: string;
-  result: Note[];
-}
-
-export const getAllNoteList = async (keyword: string): Promise<Note[]> => {
+export const getAllNoteList = async (keyword: string): Promise<any> => {
   try {
-    const response = await axios.get<ApiResponse>(
+    const response = await axios.get(
       `${BASE_URL}/allNote/others?keyword=${keyword}`,
     );
-    if (response.data.status === 200) {
-      return response.data.result;
-    } else {
-      throw new Error("노트 목록 불러오기 실패");
-    }
+    return response.data.result;
   } catch (error) {
     console.error(error, "Fail getAllNoteList");
-    throw error;
   }
 };
 
@@ -58,23 +47,11 @@ interface NoteDetail {
   error: ErrorInfo;
 }
 
-interface NoteDetailApiResponse {
-  status: number;
-  message: string;
-  result: NoteDetail;
-}
-export const getAllNoteDetail = async (noteId: number): Promise<NoteDetail> => {
+export const getAllNoteDetail = async (noteId: number): Promise<any> => {
   try {
-    const response = await axios.get<NoteDetailApiResponse>(
-      `${BASE_URL}/allNote/${noteId}`,
-    );
-    if (response.data.status === 200) {
-      return response.data.result;
-    } else {
-      throw new Error("노트 상세 정보 불러오기 실패");
-    }
+    const response = await axios.get(`${BASE_URL}/allNote/${noteId}`);
+    return response.data.result;
   } catch (error) {
     console.error(error, "Fail getAllNoteDetail");
-    throw error;
   }
 };
