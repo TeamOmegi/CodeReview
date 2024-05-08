@@ -29,7 +29,7 @@ const MainPage = () => {
   // }, [showNote, noteType]);
 
   return (
-    <div className="bg-main-100 flex h-svh w-screen overflow-hidden">
+    <div className="flex h-svh w-screen overflow-hidden bg-main-100">
       <div className="h-full w-[15%] flex-shrink-0 text-white">
         <NavBar />
       </div>
