@@ -8,9 +8,15 @@ import Toolbar from "./Toolbar";
 import StarterKit from "@tiptap/starter-kit";
 import Highlight from "@tiptap/extension-highlight";
 import Image from "@tiptap/extension-image";
-import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 
-import { common, createLowlight } from "lowlight";
+//lowlight
+import { lowlight } from "lowlight/lib/core";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import css from "highlight.js/lib/languages/css";
+import js from "highlight.js/lib/languages/javascript";
+import ts from "highlight.js/lib/languages/typescript";
+import html from "highlight.js/lib/languages/xml";
+
 import { useQuestion, useWarnning } from "../../hooks/useComfirm";
 import { useError } from "../../hooks/useAlert";
 import { noteCreate } from "../../api/myNoteAxios";
@@ -32,7 +38,10 @@ const NoteCreate = () => {
     content: "",
   });
 
-  const lowlight = createLowlight(common);
+  lowlight.registerLanguage("html", html);
+  lowlight.registerLanguage("css", css);
+  lowlight.registerLanguage("js", js);
+  lowlight.registerLanguage("ts", ts);
 
   const editor = useEditor({
     extensions: [
@@ -41,6 +50,11 @@ const NoteCreate = () => {
       Image.configure({ inline: true, allowBase64: true }),
       CodeBlockLowlight.configure({
         lowlight,
+        HTMLAttributes: {
+          class: "language-js",
+        },
+        languageClassPrefix: "language-",
+        defaultLanguage: "plaintext",
       }),
     ],
     content: "",

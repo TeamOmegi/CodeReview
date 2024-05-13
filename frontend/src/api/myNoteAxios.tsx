@@ -1,4 +1,5 @@
 import axios from "axios";
+import { useContentParser } from "../hooks/useContentParser";
 
 const BASE_URL = "";
 
@@ -43,6 +44,7 @@ export const getAllTags = async (): Promise<any> => {
 // 노트 작성
 export const noteCreate = async (noteData: Note) => {
   console.log("전달완료: ", noteData);
+  console.log("번역완료!", useContentParser(noteData.content));
   try {
     const response = await axios.post(`${BASE_URL}/notes`, noteData);
     console.log(response, "Success NoteCreate");
