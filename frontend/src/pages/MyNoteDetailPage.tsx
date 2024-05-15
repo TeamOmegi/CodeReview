@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
+
 import { getNoteData, noteDelete } from "../api/myNoteAxios";
 import { EditorContent, useEditor } from "@tiptap/react";
 
@@ -18,7 +20,9 @@ import html from "highlight.js/lib/languages/xml";
 
 import useEditorStore from "../store/useEditorStore";
 import { useDanger, useWarnning2 } from "../hooks/useComfirm";
+
 import CommentContainer from "../components/Comment/CommentContainer";
+
 
 interface ErrorInfo {
   errorId: number;
@@ -45,6 +49,7 @@ const MyNoteDetailPage = () => {
     useEditorStore();
   const [note, setNote] = useState<NoteDetail | null>(null);
 
+
   const getNoteDetail = async () => {
     try {
       const noteDetailData = await getNoteData(noteId);
@@ -54,6 +59,7 @@ const MyNoteDetailPage = () => {
       console.error("노트 상세 정보를 불러오는 중 오류가 발생했습니다:", error);
     }
   };
+
 
   const handleNoteEdit = async () => {
     if (noteType === "create") {
@@ -85,6 +91,7 @@ const MyNoteDetailPage = () => {
       noteDelete(noteId);
       navigate("/omegi/myNote");
     }
+
   };
 
   lowlight.registerLanguage("html", html);
@@ -118,17 +125,22 @@ const MyNoteDetailPage = () => {
   useEffect(() => {
     if (noteId === -1) return;
     localStorage.setItem("noteId", `${noteId}`);
-    getNoteDetail();
+
+
+    const getNoteDetail = async () => {
+      try {
+        const noteDetailData = await getNoteData(noteId);
+        setNote(noteDetailData);
+      } catch (error) {
+        console.error(
+          "노트 상세 정보를 불러오는 중 오류가 발생했습니다:",
+          error,
+        );
+      }
+    };
+    //getNoteDetail();
   }, [noteId]);
 
-  useEffect(() => {
-    if (note?.content == undefined) return;
-    editor?.commands.setContent(note?.content);
-  }, [note]);
-
-  const handleExit = () => {
-    navigate("/omegi/myNote");
-  };
 
   return (
     <div className="bg-default">

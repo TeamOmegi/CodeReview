@@ -26,7 +26,9 @@ import { useNavigate } from "react-router-dom";
 
 const NoteEdit = () => {
   const { setNoteType, setShowNote } = useEditorStore();
+
   const navigate = useNavigate();
+
   const noteId = parseInt(localStorage.getItem("noteId") || "0");
 
   const [noteData, setNoteData] = useState<Note>({
@@ -70,6 +72,7 @@ const NoteEdit = () => {
   useEffect(() => {
     const getData = async () => {
       const iniNoteData = await getNoteData(noteId);
+
       console.log("히히오쥼발싸", iniNoteData.response);
       setNoteData({
         ...noteData,
@@ -81,6 +84,7 @@ const NoteEdit = () => {
       });
     };
     getData();
+
   }, []);
 
   useEffect(() => {
