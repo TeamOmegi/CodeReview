@@ -19,23 +19,20 @@ import html from "highlight.js/lib/languages/xml";
 
 import { useQuestion, useWarnning } from "../../hooks/useComfirm";
 import { useError } from "../../hooks/useAlert";
-import { noteCreate } from "../../api/myNoteAxios";
+import { Note, noteCreate } from "../../api/myNoteAxios";
 import useEditorStore from "../../store/useEditorStore";
-
-export interface NoteData {
-  title: string;
-  tags: string[];
-  content: string;
-}
 
 const NoteCreate = () => {
   const [resetToggle, setResetToggle] = useState<boolean>(false);
   const { setShowNote, setIsWriting } = useEditorStore();
 
-  const [noteData, setNoteDate] = useState<NoteData>({
+  const [noteData, setNoteDate] = useState<Note>({
     title: "",
     tags: [],
     content: "",
+    type: "NORMAL",
+    visibility: "PUBLIC",
+    links: [],
   });
 
   lowlight.registerLanguage("html", html);
@@ -114,7 +111,17 @@ const NoteCreate = () => {
   };
 
   const handleNoteLeave = async () => {
-    const result = await useWarnning({
+    if (
+      noteData.title === "" &&
+      noteData.tags.length === 0 &&
+      (noteData.content == "<p></p>" || noteData.content == "")
+    ) {
+      handleNoteReset();
+      setShowNote();
+      return;
+    }
+
+    const result = await useQuestion({
       title: "NoteCreate Leave",
       fireText: "Note를 저장하시겠습니까?",
       resultText: "Note가 저장되었습니다.",
@@ -141,6 +148,7 @@ const NoteCreate = () => {
       setIsWriting(true);
     }
   }, [noteData]);
+
   return (
     <div className="box-border flex h-full w-full flex-col items-center pb-4 pt-5">
       <div className="flex w-full items-center justify-end px-5">
@@ -163,7 +171,7 @@ const NoteCreate = () => {
       />
       <Toolbar editor={editor} />
       <EditorContent
-        className="box-border w-full flex-1 overflow-y-scroll px-8 py-4 scrollbar-webkit"
+        className="my-4 box-border w-full flex-1 overflow-y-scroll px-8 scrollbar-webkit"
         editor={editor}
         onBlur={() => {
           console.log("성공!!");

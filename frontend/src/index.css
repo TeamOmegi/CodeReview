@@ -36,7 +36,11 @@
 }
 
 .tiptap blockquote {
-  @apply border-l-4 border-gray-500 pl-4;
+  @apply border-l-4 border-primary-500 pl-4;
+}
+
+.tiptap p > code {
+  @apply rounded-md bg-gray-200 px-2 py-1 text-rose-600;
 }
 
 @layer components {

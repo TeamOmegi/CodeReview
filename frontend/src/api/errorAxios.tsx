@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "";
+const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
 interface ErrorItem {
   errorId: number;

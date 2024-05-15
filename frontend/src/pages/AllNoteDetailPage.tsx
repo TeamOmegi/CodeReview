@@ -1,6 +1,24 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
+import CommentContainer from "../components/Comment/CommentContainer";
+import { useNavigate, useParams } from "react-router-dom";
+import { getAllNoteDetail } from "../api/allNoteAxios";
+import { EditorContent, useEditor } from "@tiptap/react";
+
+//tiptap
+import StarterKit from "@tiptap/starter-kit";
+import Highlight from "@tiptap/extension-highlight";
+import Image from "@tiptap/extension-image";
+
+//lowlight
+import { lowlight } from "lowlight/lib/core";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import css from "highlight.js/lib/languages/css";
+import js from "highlight.js/lib/languages/javascript";
+import ts from "highlight.js/lib/languages/typescript";
+import html from "highlight.js/lib/languages/xml";
 
 interface User {
+  userId?: number;
   profileImageUrl: string;
   username: string;
 }
@@ -23,94 +41,121 @@ interface NoteDetail {
   error: ErrorInfo;
 }
 
-interface Props {
-  noteId: number;
-}
+const AllNoteDetailPage = () => {
+  const navigate = useNavigate();
+  const noteId = parseInt(useParams().noteId || "-1");
+  const userId = parseInt(useParams().userId || "-1");
+  console.log("userId?!!??!?!?!?!?", userId);
+  const [note, setNote] = useState<NoteDetail | undefined>();
 
-const AllNoteDetailPage = ({ noteId }: Props) => {
-  const [note, setNote] = useState<NoteDetail | null>(null);
-
-  const sampleNote: NoteDetail = {
-    user: {
-      profileImageUrl: "이미지 url",
-      username: "사용자1",
-    },
-    noteId: 1,
-    title: "손민기는 보아라",
-    content: "손민기 고해림 화이팅 오메기떡 화이팅 ~~~",
-    type: "ERROR",
-    backlinkCount: 3,
-    createdAt: "2024-05-05",
-    error: {
-      errorId: 2,
-      errorType: "NullPointException",
-      summary: "에러 요약",
-      solved: true,
-    },
+  const getNoteDetail = async (noteId: number) => {
+    try {
+      const response = await getAllNoteDetail(noteId);
+      console.log("노트 상세 정보:", response);
+      setNote({ ...response });
+    } catch (error) {
+      console.error("노트 상세 정보를 불러오는 중 오류가 발생했습니다", error);
+    }
   };
 
+  lowlight.registerLanguage("html", html);
+  lowlight.registerLanguage("css", css);
+  lowlight.registerLanguage("js", js);
+  lowlight.registerLanguage("ts", ts);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Highlight,
+      Image.configure({ inline: true, allowBase64: true }),
+      CodeBlockLowlight.configure({
+        lowlight,
+        HTMLAttributes: {
+          class: "language-js",
+        },
+        languageClassPrefix: "language-",
+        defaultLanguage: "plaintext",
+      }),
+    ],
+    content: note?.content,
+    editorProps: {
+      attributes: {
+        class:
+          "prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl w-full h-full focus:outline-none",
+      },
+    },
+  });
+
   useEffect(() => {
-    const getNoteDetail = async () => {
-      try {
-        const response = await fetch(`백엔드API주소/${noteId}`);
-        const data = await response.json();
-        setNote(data.result);
-      } catch (error) {
-        console.error(
-          "노트 상세 정보를 불러오는 중 오류가 발생했습니다:",
-          error,
-        );
-      }
-    };
-    getNoteDetail();
+    if (noteId === -1) return;
+    getNoteDetail(noteId);
   }, [noteId]);
+
+  useEffect(() => {
+    if (note?.content == undefined) return;
+    editor?.commands.setContent(note?.content);
+  }, [note]);
+
+  const handleExit = () => {
+    navigate("/omegi/allNote");
+  };
 
   return (
     <div className="bg-default">
       <div className="box-border flex h-full w-full flex-col rounded-xl p-10 text-black">
-        <div className="flex h-[20%] w-full flex-col  border-b-2 ">
-          <div className="ml-2 mt-10 flex items-center justify-start text-3xl font-bold">
-            <h2>{note ? note.title : sampleNote.title}</h2>
+        <div className="flex h-auto w-full flex-col  border-b-2 ">
+          <div className="hover:cursor-pointer">
+            <img
+              src="/icons/PageBackIcon2.png"
+              onClick={handleExit}
+              className="h-6 w-6"
+            />
+          </div>
+          <div className="ml-3 mt-7 flex items-center justify-start text-3xl font-bold">
+            <h2>{note?.title}</h2>
           </div>
           <div className="text-md mr-5 box-border flex justify-end p-2">
-            <p className="mr-5">
-              {note ? note.user.username : sampleNote.user.username}
-            </p>
-            <p className="mr-2">
-              {note ? note.createdAt : sampleNote.createdAt}
-            </p>
+            <p className="mr-5">{note?.user.username}</p>
+            <p className="mr-2">{note?.createdAt.split("T")[0]}</p>
           </div>
         </div>
         <hr />
-        <div className="box-border flex h-auto w-full flex-col border-b p-7">
-          <p>{note ? note.content : sampleNote.content}</p>
-          <br />
-          <div>
-            {note && note.type === "ERROR" ? (
-              <>
-                <p>에러 요약: {note.error.summary}</p>
-                <p>
-                  해결 여부: {note.error.solved ? "해결됨" : "해결되지 않음"}
-                </p>
-              </>
-            ) : (
-              <p>에러가 없습니다.</p>
-            )}
+        <div className=" h-full w-full overflow-y-scroll scrollbar-webkit">
+          <div className="box-border flex h-auto w-full flex-col border-b p-5">
+            {/* <p>{note?.content}</p> */}
+            <EditorContent
+              className="pointer-events-none box-border w-full flex-1 overflow-y-scroll px-6 py-4 scrollbar-webkit"
+              editor={editor}
+            />
+            <br />
+
+            <div className="box-border">
+              {note && note.type === "ERROR" ? (
+                <>
+                  <hr />
+                  <h3 className="m-5">에러 정보</h3>
+                  <p>에러 요약: {note.error.summary}</p>
+                  <p>
+                    해결 여부: {note.error.solved ? "해결됨" : "해결되지 않음"}
+                  </p>
+                </>
+              ) : (
+                <p></p>
+              )}
+            </div>
           </div>
-        </div>
-        <hr />
-        <div className="box-border flex h-auto w-full p-3">
-          <img
-            src="/public/icons/BacklinkIcon.png"
-            alt="백링크"
-            className="h-5 w-5"
-          />
-          <p className="ml-1 text-base">
-            {note ? note.backlinkCount : sampleNote.backlinkCount}개
-          </p>
-        </div>
-        <div className="box-border flex h-auto w-full bg-orange-100 p-5">
-          댓글
+          <hr />
+          <div className="box-border flex h-auto w-full p-3">
+            <img
+              src="/public/icons/BacklinkIcon.png"
+              alt="백링크"
+              className="h-5 w-5"
+            />
+            <p className="ml-1 text-base">{note?.backlinkCount}개</p>
+          </div>
+          <div className="box-border flex h-auto w-full flex-col p-3">
+            <CommentContainer noteId={noteId} currentUserId={userId} />
+          </div>
         </div>
       </div>
     </div>

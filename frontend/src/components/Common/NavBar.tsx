@@ -86,7 +86,12 @@ const NavBar = () => {
             </div>
           </div>
           <div
-            className={isClick === "/omegi/myNote" ? btnClick : btnNoClick}
+            className={
+              isClick === "/omegi/myNote" ||
+              /^\/omegi\/myNote\/\d+$/.test(isClick)
+                ? btnClick
+                : btnNoClick
+            }
             onClick={handleMyNoteClick}
           >
             <div className="ml-5 flex items-center justify-center">
@@ -94,7 +99,8 @@ const NavBar = () => {
                 className="mr-4 h-5 w-5"
                 alt="Mynote_Icon"
                 src={
-                  isClick === "/omegi/myNote"
+                  isClick === "/omegi/myNote" ||
+                  /^\/omegi\/myNote\/\d+$/.test(isClick)
                     ? "/icons/MynoteIcon_b.png"
                     : "/icons/MynoteIcon.png"
                 }
@@ -103,7 +109,12 @@ const NavBar = () => {
             </div>
           </div>
           <div
-            className={isClick === "/omegi/allNote" ? btnClick : btnNoClick}
+            className={
+              isClick === "/omegi/allNote" ||
+              /^\/omegi\/allNote\/\d+$/.test(isClick)
+                ? btnClick
+                : btnNoClick
+            }
             onClick={handleAllNoteClick}
           >
             <div className="ml-5 flex items-center justify-center">
@@ -111,7 +122,8 @@ const NavBar = () => {
                 className="mr-4 h-5 w-5"
                 alt="Allnote_Icon"
                 src={
-                  isClick === "/omegi/allNote"
+                  isClick === "/omegi/allNote" ||
+                  /^\/omegi\/allNote\/\d+$/.test(isClick)
                     ? "/icons/AllnoteIcon_b.png"
                     : "/icons/AllnoteIcon.png"
                 }

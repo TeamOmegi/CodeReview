@@ -20,23 +20,25 @@ import html from "highlight.js/lib/languages/xml";
 // import { common, createLowlight } from "lowlight";
 import { useQuestion, useWarnning } from "../../hooks/useComfirm";
 import { useError } from "../../hooks/useAlert";
-import { getNoteData, noteEdit } from "../../api/myNoteAxios";
+import { Note, getNoteData, noteEdit } from "../../api/myNoteAxios";
 import useEditorStore from "../../store/useEditorStore";
-
-export interface NoteData {
-  title: string;
-  tags: string[];
-  content: string;
-}
+import { useNavigate } from "react-router-dom";
 
 const NoteEdit = () => {
   const { setNoteType, setShowNote } = useEditorStore();
+
+  const navigate = useNavigate();
+
   const noteId = parseInt(localStorage.getItem("noteId") || "0");
 
-  const [noteData, setNoteData] = useState<NoteData>({
+  const [noteData, setNoteData] = useState<Note>({
+    noteId: noteId,
     title: "",
     tags: [],
     content: "",
+    type: "NORMAL",
+    visibility: "PUBLIC",
+    links: [],
   });
 
   lowlight.registerLanguage("html", html);
@@ -70,14 +72,19 @@ const NoteEdit = () => {
   useEffect(() => {
     const getData = async () => {
       const iniNoteData = await getNoteData(noteId);
-      setNoteData({ ...iniNoteData });
+
+      console.log("히히오쥼발싸", iniNoteData.response);
+      setNoteData({
+        ...noteData,
+        title: iniNoteData.response.title,
+        tags: [...iniNoteData.response.tags],
+        content: iniNoteData.response.content,
+        type: iniNoteData.response.type,
+        visibility: iniNoteData.response.visibility,
+      });
     };
     getData();
-    // setNoteData({
-    //   title: "여기는 ~~번 노트입니다.",
-    //   tags: ["# 1", "# 2", "# 3"],
-    //   content: "<pre><code>zzzzz</code></pre>",
-    // });
+
   }, []);
 
   useEffect(() => {
@@ -112,6 +119,7 @@ const NoteEdit = () => {
     if (result) {
       await noteEdit(noteId, noteData);
       setShowNote();
+      navigate("/omegi/myNote");
       setTimeout(() => {
         setNoteType("create");
       }, 500);
@@ -153,7 +161,7 @@ const NoteEdit = () => {
       <Tag iniTag={noteData.tags || []} handleChangeData={handleChangeData} />
       <Toolbar editor={editor} />
       <EditorContent
-        className="box-border w-full flex-1 overflow-y-scroll px-8 py-4 scrollbar-webkit"
+        className="my-4 box-border w-full flex-1 overflow-y-scroll px-8 scrollbar-webkit"
         editor={editor}
         onBlur={() => {
           console.log("성공!!");

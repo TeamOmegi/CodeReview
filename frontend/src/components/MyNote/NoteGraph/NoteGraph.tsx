@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { useQuestion } from "../../../hooks/useComfirm";
+import { linkCreate, linkDelete } from "../../../api/noteGraphAxios";
 
 interface Node {
   id: number;
@@ -19,22 +20,8 @@ interface Graph {
   links: Link[];
 }
 
-const NoteGraph = () => {
-  const svgRef = useRef<SVGSVGElement | null>(null);
-  const graphRef = useRef<HTMLDivElement | null>(null); // Ref for the div containing the graph
-  const [links, setLinks] = useState<Link[]>([
-    { source: 2, target: 1 },
-    { source: 3, target: 2 },
-    { source: 4, target: 1 },
-    { source: 5, target: 1 },
-    { source: 9, target: 8 },
-    { source: 10, target: 8 },
-    { source: 11, target: 2 },
-    { source: 7, target: 2 },
-    { source: 6, target: 8 },
-  ]);
-
-  const [nodes, setNodes] = useState<Node[]>([
+const GraphDataSample: Graph = {
+  nodes: [
     { id: 2, idx: 1, title: "태그", type: "TAG" },
     { id: 3, idx: 2, title: "해림메모1", type: "MYNOTE" },
     { id: 4, idx: 3, title: "도하메모", type: "OTHERNOTE" },
@@ -47,11 +34,32 @@ const NoteGraph = () => {
     { id: 13, idx: 10, title: "민기메모2", type: "OTHERNOTE" },
     { id: 16, idx: 11, title: "민기메모3", type: "OTHERNOTE" },
     { id: 19, idx: 12, title: "연결안됨", type: "MYNOTE" },
-  ]);
-  const [selectedNodes, setSelectedNodes] = useState<number[]>([]);
+  ],
+  links: [
+    { source: 2, target: 1 },
+    { source: 3, target: 2 },
+    { source: 4, target: 1 },
+    { source: 5, target: 1 },
+    { source: 9, target: 8 },
+    { source: 10, target: 8 },
+    { source: 11, target: 2 },
+    { source: 7, target: 2 },
+    { source: 6, target: 8 },
+  ],
+};
 
+const NoteGraph = () => {
+  // Refs 정의
+  const svgRef = useRef<SVGSVGElement | null>(null);
+  const graphRef = useRef<HTMLDivElement | null>(null);
+
+  // State 정의
+  const [selectedNodes, setSelectedNodes] = useState<number[]>([]);
+  const [nodes, setNodes] = useState<Node[]>(GraphDataSample.nodes);
+  const [links, setLinks] = useState<Link[]>(GraphDataSample.links);
   let simulation: d3.Simulation<Node, Link>;
 
+  // ================== 노트 연결  ==================
   const handleNodeDoubleClick = (nodeIdx: number) => {
     const selectedNode = nodes.find((node) => node.idx === nodeIdx);
     if (!selectedNode) return;
@@ -77,6 +85,7 @@ const NoteGraph = () => {
     }
   };
 
+  // 노드 연결 핸들러
   const handleConnect = async (firstNodeIdx: number, nodeIdx: number) => {
     const result = await useQuestion({
       title: "Connect Note",
@@ -85,12 +94,22 @@ const NoteGraph = () => {
     });
 
     if (result) {
-      setLinks([...links, { source: firstNodeIdx, target: nodeIdx }]);
+      // 링크 추가
+      const newLink = { source: firstNodeIdx, target: nodeIdx };
+      setLinks([...links, newLink]);
+
+      // linkCreate 함수를 사용하여 링크 생성
+      try {
+        await linkCreate(newLink);
+      } catch (error) {
+        console.error("Failed to create link:", error);
+      }
       setSelectedNodes([]);
     }
   };
 
-  const handleDisconnect = (
+  // ================== 링크 삭제 ==================
+  const handleLinkClick = async (
     sourceNode: number,
     targetNode: number,
     d: Link,
@@ -99,36 +118,30 @@ const NoteGraph = () => {
     // 연결 끊기 작업 수행
     console.log("링크 클릭:", d.source, "->", d.target);
 
-    const otherLinks = graph.links.filter(
-      (link) => !(link.source === d.source && link.target === d.target),
-    );
+    const handleDeleteLink = async () => {
+      try {
+        // linkDelete 함수를 사용하여 선택된 링크의 연결을 끊습니다.
+        await linkDelete(sourceNode, targetNode);
 
-    const shouldRemoveSourceNode =
-      !otherLinks.some(
-        (link) => link.source === sourceNode || link.target === sourceNode,
-      ) && nodes[sourceNode]?.type !== "MYNOTE";
+        // 연결을 끊은 후에 로컬 상태를 업데이트합니다.
+        const updatedLinks = graph.links.filter(
+          (link) => !(link.source === d.source && link.target === d.target),
+        );
+        setLinks(updatedLinks);
+        console.log("updatedLinks:", updatedLinks);
 
-    const shouldRemoveTargetNode =
-      !otherLinks.some(
-        (link) => link.source === targetNode || link.target === targetNode,
-      ) && nodes[targetNode]?.type !== "MYNOTE";
+        // 연결을 끊은 후에 로컬 상태를 업데이트합니다.
+        const updatedNodes = graph.nodes.filter(
+          (node) => node.id !== sourceNode && node.id !== targetNode,
+        );
+        setNodes(updatedNodes);
+        console.log("updatedNodes:", updatedNodes);
+        console.log("링크 연결 해제 완료");
+      } catch (error) {
+        console.error("Failed to disconnect link:", error);
+      }
+    };
 
-    const updatedNodes = graph.nodes.filter(
-      (node) =>
-        (node.id !== sourceNode || !shouldRemoveSourceNode) &&
-        (node.id !== targetNode || !shouldRemoveTargetNode),
-    );
-    setNodes(updatedNodes);
-    console.log("updatedNodes:", updatedNodes);
-
-    const updatedLinks = graph.links.filter(
-      (link) => !(link.source === d.source && link.target === d.target),
-    );
-    setLinks(updatedLinks);
-    console.log("updatedLinks:", updatedLinks);
-  };
-
-  const handleLinkClick = (event: MouseEvent, d: Link, graph: Graph) => {
     const handleDisconnectAlert = async () => {
       const result = await useQuestion({
         title: "Disconnect Link",
@@ -137,11 +150,10 @@ const NoteGraph = () => {
       });
 
       if (result) {
-        const sourceNode = d.source;
-        const targetNode = d.target;
-        handleDisconnect(sourceNode, targetNode, d, graph);
-        console.log("성공");
-      } else console.log("취소");
+        await handleDeleteLink();
+      } else {
+        console.log("취소");
+      }
     };
 
     handleDisconnectAlert();
@@ -175,7 +187,7 @@ const NoteGraph = () => {
 
     const link = svg
       .append("g")
-      .selectAll("link")
+      .selectAll(".link")
       .data(graph.links)
       .enter()
       .append("line")
@@ -183,13 +195,11 @@ const NoteGraph = () => {
       .attr("stroke", "#999")
       .attr("stroke-opacity", 0.6)
       .attr("stroke-width", (d) => Math.sqrt(10)) // 링크의 두께
-      .on("click", (event, d: Link) =>
-        handleLinkClick(event, d, { nodes, links }),
-      );
+      .on("click", (event, d: Link) => handleLinkClick(event, d, graph)); // 그래프 객체 전달
 
     const node = svg
       .append("g")
-      .selectAll("circle")
+      .selectAll(".circle") // class로 선택하도록 수정
       .data(graph.nodes)
       .enter()
       .append("g")
