@@ -13,6 +13,7 @@ export const useContentParser = (elementString: string) => {
       }
       // 노드가 요소 노드인 경우 재귀적으로 해당 요소의 텍스트 콘텐츠를 추출합니다.
       else if (node.nodeType === Node.ELEMENT_NODE) {
+
         textParser(Array.from(node.childNodes));
       }
     }
