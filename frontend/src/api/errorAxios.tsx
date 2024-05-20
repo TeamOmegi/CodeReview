@@ -1,65 +1,69 @@
 import axios from "axios";
+import axiosInstance from "./axiosInstance";
 
 const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
-interface ErrorItem {
+interface Project {
+  projectId: number;
+  name: string;
+}
+
+export const getProjectList = async (): Promise<any> => {
+  try {
+    const response = await axiosInstance.get(`/projects`);
+    return response.data.response.projects;
+  } catch (error) {
+    console.error(error, "Fail getProjectList");
+  }
+};
+
+interface Error {
+
   errorId: number;
   isSolved: boolean;
   errorType: string;
   project: string;
   service: string;
-  time: string; // 에러 발생 시간의 형식에 따라 수정해야 합니다.
+  time: string;
   pastNoteCount: number;
 }
 
-interface ErrorListResponse {
-  status: number;
-  message: string;
-  result: ErrorItem[];
-}
 
 // 에러 리스트 가져오기
 export const getErrorList = async (
   project: string,
   service: string,
-  solved: boolean | undefined,
-  errorType: string | undefined,
-): Promise<any> => {
+  solved: boolean,
+) => {
   try {
-    const response = await axios.get<ErrorListResponse>(`${BASE_URL}/errors`, {
-      params: {
-        project,
-        service,
-        solved,
-        errorType,
-      },
-    });
-    return response.data.result;
+    const params = { project: project, solved: solved };
+    if (solved !== null) {
+      params.solved = solved;
+    }
+    const response = await axiosInstance.get(`/errors`, { params });
+    console.log(response.data.response);
+    return response.data.response;
   } catch (error) {
-    console.error(error, "Fail getErrorList");
+    console.error("Error getErrorList", error);
   }
 };
 
 // 에러 상세 조회
 interface ErrorDetail {
-  traces: string[]; // 추후 수정
+  type: string;
   summary: string;
   log: string;
-  noteId: number; // 작성된 노트가 없는 경우 -1
-}
-
-interface ErrorDetailResponse {
-  status: number;
-  message: string;
-  result: ErrorDetail;
+  trace: string[];
+  time: string;
+  projectId: number;
+  serviceId: number;
+  noteId: number;
 }
 
 export const getErrorDetail = async (errorId: number): Promise<any> => {
   try {
-    const response = await axios.get<ErrorDetailResponse>(
-      `${BASE_URL}/errors/${errorId}`,
-    );
-    return response.data.result;
+    const response = await axiosInstance.get(`/errors/${errorId}`);
+    return response.data.response;
   } catch (error) {
     console.error(error, "Fail getErrorDetail");
   }

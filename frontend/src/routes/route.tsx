@@ -10,11 +10,14 @@ import NoteList from "../components/MyNote/NoteList/NoteList";
 import MainPage from "../pages/MainPage";
 import IndexPage from "../pages/IndexPage";
 import MyNoteDetailPage from "../pages/MyNoteDetailPage";
+import LoginPage from "../pages/LoginPage";
+import ErrorDetailPage from "../pages/ErrorDetailPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <IndexPage />,
+    children: [{ path: "login", element: <LoginPage /> }],
   },
   {
     path: "/omegi",
@@ -56,7 +59,7 @@ const router = createBrowserRouter([
       },
       {
         path: "error/:errorId",
-        element: <ErrorListPage />,
+        element: <ErrorDetailPage />,
       },
       {
         path: "setting",

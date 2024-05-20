@@ -15,7 +15,7 @@ const useEditorStore = create<Store>()((set) => ({
   isWriting: false,
   setShowNote: () => set((state) => ({ showNote: !state.showNote })),
   setNoteType: (typeName) => set(() => ({ noteType: typeName })),
-  setIsWriting: (isWrite) => set((isWriting) => ({ isWriting: isWrite })),
+  setIsWriting: (isWrite) => set(() => ({ isWriting: isWrite })),
 }));
 
 export default useEditorStore;

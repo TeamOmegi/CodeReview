@@ -38,12 +38,52 @@ module.exports = {
           200: "#F5F5F5",
         },
       },
+
+      boxShadow: {
+        "text-glow": "0 0 10px rgba(255, 255, 255, 0.8)",
+      },
+      animation: {
+        fade: "fadeIn .75s ease-in",
+        gradient: "animatedgradient 10s linear infinite alternate",
+      },
+      keyframes: {
+        fadeIn: {
+          from: { opacity: 0 },
+          to: { opacity: 1 },
+        },
+        animatedgradient: {
+          "0%": { backgroundPosition: "0% 0%" },
+          "100%": { backgroundPosition: "100% 100%" },
+        },
+      },
+      backgroundSize: {
+        "300%": "300%",
+      },
       fontFamily: {
-        sans: ["Pretendard-Regular", "sans-serif"],
+        sans: ["SeoulNamsanM", "ui-sans-serif", "system-ui"],
+        PyeongChang: ["PyeongChangPeace-Bold", "ui-sans-serif", "system-ui"],
       },
     },
   },
+  // 여기 추가
+  utilities: {
+    ".snap": {
+      "scroll-snap-type":
+        "var(--scroll-snap-direction) var(--scroll-snap-constraint)",
+    },
+    ".snap-y": {
+      "--scroll-snap-direction": "y",
+    },
+    ".snap-mandatory": {
+      "--scroll-snap-constraint": "mandatory",
+    },
+    ".snap-start": {
+      "scroll-snap-align": "start",
+    },
+  },
   plugins: [
+    require("tailwind-scrollbar-hide"),
+
     function ({ addUtilities }) {
       const newUtilities = {
         ".scrollbar-webkit": {

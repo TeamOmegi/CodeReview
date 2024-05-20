@@ -2,13 +2,22 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useWarnning2 } from "../../hooks/useComfirm";
 import useEditorStore from "../../store/useEditorStore";
+import useErrorStore from "../../store/useErrorStore";
+import axiosInstance from "../../api/axiosInstance";
+import Cookies from "js-cookie";
+import { fetchUserProfile } from "../../api/userAxios";
+
 
 const NavBar = () => {
   const [isClick, setIsClick] = useState<string>("");
   const location = useLocation();
   const navigate = useNavigate();
-  const { showNote, noteType, setShowNote, setNoteType } = useEditorStore();
   const [isHovered, setIsHovered] = useState(false);
+  const { showNote, noteType, setShowNote, setNoteType } = useEditorStore();
+  const { isNewError } = useErrorStore();
+  const [profileName, setProfileName] = useState("");
+  const [profileImage, setProfileImage] = useState("");
+
 
   const btnClick =
     "flex h-12 w-full items-center justify-start rounded-xl text-main-100 font-bold bg-gradient-to-r from-secondary-500 via-primary-500 to-primary-400 hover:cursor-pointer shadow shadow-primary-300 transition duration-100";
@@ -40,31 +49,71 @@ const NavBar = () => {
     navigate("/omegi/setting");
   };
 
+  const handleLogout = async () => {
+    try {
+      await axiosInstance.delete("/users/logout");
+      Cookies.remove("access");
+      Cookies.remove("refresh");
+      localStorage.removeItem("user");
+      navigate("/login");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
+
   const hadleNoteClick = async () => {
     if (noteType === "edit") {
       const result = await useWarnning2({
         title: "새 노트를 작성하시겠습니까?",
         fireText: "이전 변경사항은 저장되지 않습니다.",
       });
-
-      if (result) {
-        setNoteType("create");
-      }
-      return;
-    }
+      if (result) return setNoteType("create");
+      else return;
+    } else if (noteType === "link") return setNoteType("create");
     setShowNote();
   };
 
   useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const user = await fetchUserProfile();
+        setProfileName(user.username);
+        setProfileImage(user.profileImageUrl);
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error);
+        // 에러 발생 시 프로필 정보를 초기화하거나 기본값으로 설정할 수 있습니다.
+        navigate("/login");
+        setProfileName("");
+        setProfileImage("");
+      }
+    };
+
+    fetchProfile();
+  }, []);
+  useEffect(() => {
     setIsClick(location.pathname);
   }, []);
+
+  useEffect(() => {
+    if (noteType === "link") {
+      if (
+        !/^\/omegi\/myNote\/\d+$/.test(location.pathname) &&
+        !/^\/omegi\/allNote\/\d+$/.test(location.pathname)
+      ) {
+        if (showNote) setShowNote();
+        setTimeout(() => {
+          setNoteType("create");
+        }, 750);
+      }
+    }
+  }, [location.pathname]);
 
   return (
     <div className="flex h-full w-full">
       <div className="flex h-full w-full select-none flex-col bg-main-100">
-        <div className="flex h-1/6 items-center justify-center">
-          <div className=" mt-10 inline-block bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-400 bg-clip-text text-4xl font-extrabold text-transparent">
-            Omegi
+        <div className="h-1/6 w-full ">
+          <div className="mt-10 flex h-full w-full items-end justify-center bg-gradient-to-r from-primary-600 via-secondary-500 to-primary-400 bg-clip-text font-PyeongChang text-[40px] font-extrabold text-transparent">
+            <div>OMEGI</div>
           </div>
         </div>
         <div className="m-3 mt-28 flex h-4/6 flex-col items-center pl-1 text-base">
@@ -72,7 +121,7 @@ const NavBar = () => {
             className={isClick === "/omegi" ? btnClick : btnNoClick}
             onClick={handleDashBoardClick}
           >
-            <div className="ml-5 flex items-center justify-center">
+            <div className="relative ml-5  flex items-center justify-center">
               <img
                 className="mr-4 h-5 w-5"
                 alt="Dashboard_Icon"
@@ -83,6 +132,13 @@ const NavBar = () => {
                 }
               />
               <span>대시보드</span>
+
+              {isNewError && (
+                <span className="absolute  right-[-18px] top-[-2px] flex h-3 w-3">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
+                  <span className="relative inline-flex h-3 w-3 rounded-full bg-red-500"></span>
+                </span>
+              )}
             </div>
           </div>
           <div
@@ -179,22 +235,30 @@ const NavBar = () => {
               onMouseLeave={() => setIsHovered(false)}
             />
           </div>
-          <div className="ml-3 flex h-2/3 w-full items-center justify-center pb-3">
-            <div className="mr-1 flex h-11 w-11 items-center justify-center rounded-full bg-slate-300">
-              <img
-                className="h-9 w-9"
-                src={"/icons/ProfileDefault.png"}
-                alt="Profile"
-              />
+          <div className="ml-5 flex h-2/3 w-full items-center justify-center pb-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full">
+              {profileImage ? (
+                <img
+                  className="h-9 w-9 rounded-full"
+                  src={profileImage}
+                  alt="Profile"
+                />
+              ) : (
+                <img
+                  className="h-9 w-9"
+                  src={"/icons/ProfileDefault.png"}
+                  alt="Profile"
+                />
+              )}
             </div>
 
-            {/* <div className="flex-1">{profileName}</div> */}
-            <div className="ml-3 flex-1">도하이사용자</div>
-            <div className="mr-2 flex justify-end">
+            <div className="ml-3 flex-1">{profileName}</div>
+            <div className="mr-5 flex justify-end">
               <img
                 className="h-8 w-8 hover:cursor-pointer"
                 alt="Signout_Icon"
                 src="/icons/SignoutIcon.png"
+                onClick={handleLogout}
               />
             </div>
           </div>

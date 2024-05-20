@@ -9,6 +9,7 @@ interface Props {
 const Tag = ({ iniTag, resetToggle, handleChangeData }: Props) => {
   const [tagName, setTagName] = useState<string>("");
   const [tagData, setTagData] = useState<string[]>([]);
+  const [isClear, setIsClear] = useState<boolean>(false);
 
   useEffect(() => {
     if (iniTag.length == 0) return;
@@ -21,6 +22,7 @@ const Tag = ({ iniTag, resetToggle, handleChangeData }: Props) => {
   }, [resetToggle]);
 
   const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    if (e.target.value.length === 1 && tagName.length === 0) setIsClear(false);
     setTagName(e.target.value);
   };
 
@@ -40,13 +42,16 @@ const Tag = ({ iniTag, resetToggle, handleChangeData }: Props) => {
       setTagName("");
       setTagData(newTagData);
       handleChangeData(newTagData);
-    } else if (e.key == "Backspace" && tagName == "") {
+    } else if (e.key == "Backspace" && isClear) {
       if (tagData.length > 0) {
         const newTagData = tagData.slice(0, -1);
         setTagData(newTagData);
         handleChangeData(newTagData);
       }
     }
+
+    if (tagName.length === 0) setIsClear(true);
+    else setIsClear(false);
   };
 
   const handleTagDelete = (index: number) => {
@@ -74,7 +79,10 @@ const Tag = ({ iniTag, resetToggle, handleChangeData }: Props) => {
           className={` ml-2 h-7 w-48 bg-main-200 text-base tracking-[0.07em]  focus:outline-none ${tagData.length === 3 ? "placeholder-red-400" : "placeholder-[#868E96]"}`}
           placeholder={`해시태그 입력. (${tagData.length}/3)`}
           onChange={handleTagChange}
-          onKeyUp={handleOnKeyUp}
+          onKeyUp={(e) => {
+            if (tagName.length == 1 && e.key == "Backspace") return;
+            handleOnKeyUp(e);
+          }}
         />
       </div>
     </div>

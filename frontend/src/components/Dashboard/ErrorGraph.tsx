@@ -1,93 +1,64 @@
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
-interface Node {
-  id: string;
-  imgLink: string;
-}
+import { getDiagram } from "../../api/projectAxios";
+import useErrorStore from "../../store/useErrorStore";
+// interface Node {
+//   id: number;
+//   serviceName: string;
+//   img: string;
+// }
 
-interface Link {
-  source: string;
-  target: string;
+// interface Link {
+//   source: number;
+//   target: number;
+// }
+interface Props {
+  projectId: number;
 }
-
-const ErrorGraph = () => {
+const ErrorGraph = ({ projectId }: Props) => {
   const svgRef = useRef<any>();
   const pjtRef = useRef<any[]>([]);
-  const [serviceName, setServiceName] = useState<string>("");
+  const [nodes, setNodes] = useState<any>([]);
+  const [links, setLinks] = useState<any>([]);
+  const { errorMap } = useErrorStore();
 
-  const [nodes, setNodes] = useState<any>([
-    {
-      id: "해림",
-      imgLink: "/진짜루돌프.png",
-    },
-    {
-      id: "화석",
-      imgLink: "/진짜루돌프.png",
-    },
-    {
-      id: "제훈",
-      imgLink: "/진짜루돌프.png",
-    },
-    {
-      id: "아영",
-      imgLink: "/진짜루돌프.png",
-    },
-    {
-      id: "도하",
-      imgLink: "/진짜루돌프.png",
-    },
-    {
-      id: "컨설턴트님",
-      imgLink: "/진짜산타.png",
-    },
-    {
-      id: "민기",
-      imgLink: "/진짜루돌프.png",
-    },
-  ]);
-  const [links, setLinks] = useState<any>([
-    {
-      source: "해림",
-      target: "화석",
-    },
-    {
-      source: "화석",
-      target: "아영",
-    },
-    {
-      source: "제훈",
-      target: "도하",
-    },
-
-    {
-      source: "도하",
-      target: "화석",
-    },
-    {
-      source: "도하",
-      target: "아영",
-    },
-    {
-      source: "컨설턴트님",
-      target: "해림",
-    },
-    {
-      source: "컨설턴트님",
-      target: "민기",
-    },
-    {
-      source: "민기",
-      target: "아영",
-    },
-  ]);
+  const getDiagramData = async () => {
+    if (projectId == -1) return;
+    const diagramData = await getDiagram(projectId);
+    setNodes([...diagramData.nodes]);
+    setLinks([...diagramData.edges]);
+  };
+  useEffect(() => {
+    getDiagramData();
+  }, [projectId]);
 
   useEffect(() => {
-    console.log("리렌더링");
-    draw();
-  }, [nodes]);
+    if (nodes.length != 0 && links.length != 0) {
+      draw();
+      errorCheck();
+    } else {
+      const svg = d3.select(svgRef.current);
+      svg.selectAll("*").remove();
+    }
+  }, [nodes, errorMap]);
+
+  const errorCheck = () => {
+    const errorIdxArr = pjtRef.current.map((node, index) => {
+      if (errorMap.has(parseInt(node.getAttribute("pjt")))) return index;
+      else return -1;
+    });
+
+    errorIdxArr.map((idx) => {
+      if (idx == -1) return;
+      d3.select(pjtRef?.current[idx]).attr("fill", "#ff5050");
+    });
+  };
+
   const draw = () => {
-    const width = 1000;
-    const height = 600;
+    const width = 660;
+    const height = 240;
+    const radius = 25;
+    const margin = 100;
 
     const svg = d3
       .select(svgRef.current)
@@ -99,7 +70,9 @@ const ErrorGraph = () => {
       .append("clipPath")
       .attr("id", "circleClip")
       .append("circle")
-      .attr("r", 60);
+
+      .attr("r", radius);
+
 
     //svg에 정의하는 코드 (svg 내에서 사용가능한 기능 만들어놓는다 생각하면됨)
     var defs = svg.append("defs");
@@ -125,24 +98,32 @@ const ErrorGraph = () => {
       .data(links)
       .join("line")
       .attr("stroke", "black")
-      .attr("stroke-width", 2)
+      .attr("stroke-width", 1)
       .attr("marker-end", "url(#arrowhead)"); //정의된거 사용하는 방법
 
-    //filter(blur같은)를 정의함
-    var filter = defs
+    // 블러 필터
+    var blurFilter = defs.append("filter").attr("id", "blur-filter");
+
+    blurFilter
+      .append("feGaussianBlur")
+      .attr("in", "SourceGraphic")
+      .attr("stdDeviation", 5);
+
+    //쉐도우 필터
+    var shadowFilter = defs
       .append("filter")
       .attr("id", "default-shadow")
       .attr("height", "130%");
 
     // 블러 생성
-    filter
+    shadowFilter
       .append("feGaussianBlur")
       .attr("in", "SourceAlpha") //그림자 (흑,백)
-      .attr("stdDeviation", 5)
+      .attr("stdDeviation", 25)
       .attr("result", "defaultBlur");
 
     // 흑백인 그림자에 색상넣기
-    filter
+    shadowFilter
       .append("feColorMatrix")
       .attr("in", "defaultBlur")
       .attr("type", "matrix")
@@ -150,50 +131,16 @@ const ErrorGraph = () => {
       .attr("result", "defaultBlurColor");
 
     //필터에 feOffset을 적용 (필터가 적용될 위치) .attr("dx" or "dy" 설정가능)
-    filter
+
+    shadowFilter
       .append("feOffset")
       .attr("in", "defaultBlurColor")
       .attr("result", "offsetBlur");
 
-    var feMerge = filter.append("feMerge");
+    var feMerge = shadowFilter.append("feMerge");
 
     feMerge.append("feMergeNode").attr("in", "defaultOffsetBlur");
     feMerge.append("feMergeNode").attr("in", "SourceGraphic");
-
-    // 에러블러 정의하기
-    var errorfilter = defs
-      .append("filter")
-      .attr("id", "error-shadow")
-      .attr("height", "130%");
-
-    // 블러 생성
-    errorfilter
-      .append("feGaussianBlur")
-      .attr("in", "SourceAlpha")
-      .attr("stdDeviation", 10)
-      .attr("result", "errorBlur");
-
-    // 다른 색상의 색상 변환
-    errorfilter
-      .append("feColorMatrix")
-      .attr("in", "errorBlur")
-      .attr("type", "matrix")
-      .attr("values", "1 1 1 1 1  1 0 0 0 0  0 0 1 0 0  0 0 0 1 0") // 색상 변환 값
-      .attr("result", "errorBlurColor");
-
-    // 필터에 feOffset을 적용 (필터가 적용될 위치)
-    errorfilter
-      .append("feOffset")
-      .attr("in", "errorBlurColor")
-      .attr("result", "errorOffsetBlur");
-
-    // 필터들을 결합하는 feMerge 생성
-    var feMerge2 = errorfilter.append("feMerge");
-
-    // 필터에 연결할 노드 추가
-    feMerge2.append("feMergeNode").attr("in", "errorOffsetBlur");
-    feMerge2.append("feMergeNode").attr("in", "SourceGraphic");
-    /////
 
     //노드생성
     const node = svg
@@ -201,41 +148,68 @@ const ErrorGraph = () => {
       .data(nodes)
       .join("g")
       .each(function (d: any) {
+        d3.select(this).selectAll("circle").remove();
         d3.select(this).selectAll("image").remove(); // 기존 이미지 삭제
         d3.select(this).selectAll("text").remove(); // 기존 텍스트 삭제
+
+        d3.select(this)
+          .append("circle")
+          .attr("r", radius + 12)
+          .attr("pjt", `${d.serviceId}`)
+          .attr("fill", "#6699ff")
+          .attr("class", "blur-circle")
+          .style("filter", "url(#blur-filter)")
+          .style("opacity", 0.4);
+        //.style("filter", "url(#default-shadow)");
+
+        d3.select(this)
+          .append("circle")
+          .attr("r", radius + 1)
+          .attr("pjt", `${d.serviceId}`)
+          .attr("fill", "white");
+
         d3.select(this)
           .append("image")
-          .attr("xlink:href", d.imgLink)
+          .attr("xlink:href", `${d.serviceImageUrl}`)
           .attr("clip-path", "url(#circleClip)") //이미지 오리기 (위에 정의해놓음)
-          .attr("width", 100) // 이미지의 크기
-          .attr("height", 100) // 이미지의 크기
-          .attr("x", -45)
-          .attr("y", -50)
-          .attr("pjt", `${d.id}`)
-          .style("filter", "url(#default-shadow)")
-          .on("click", function () {
-            d3.select(this).style("filter", "url(#default-shadow)"); // 이미 적용된 스타일 제거
-          });
+          .attr("width", 2 * radius) // 이미지의 크기
+          .attr("height", 2 * radius) // 이미지의 크기
+          .attr("x", -radius)
+          .attr("y", -radius);
+
         d3.select(this)
           .append("text")
-          .text((d: any) => d.id)
+          .text((d: any) => d.serviceName)
           .attr("x", -25)
-          .attr("y", (d: any) => {
-            if (d.id == "컨설턴트님") return -25;
-            return -5;
-          });
+          .attr("y", +50)
+          .style("font-size", "12px") // 폰트 크기 설정
+          .style("font-weight", "bold");
       });
 
     const ticked = () => {
       link
-        .attr("x1", (d: any) => d.source.x)
-        .attr("y1", (d: any) => d.source.y)
+        .attr("x1", (d: any) => {
+          const dx = d.target.x - d.source.x;
+          const dy = d.target.y - d.source.y;
+          const length = Math.sqrt(dx * dx + dy * dy);
+          const offsetX = dx * (radius / (length == 0 ? 1 : length));
+          return d.source.x + offsetX;
+        })
+        .attr("y1", (d: any) => {
+          {
+            const dx = d.target.x - d.source.x;
+            const dy = d.target.y - d.source.y;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const offsetY = dy * (radius / (length == 0 ? 1 : length));
+            return d.source.y + offsetY;
+          }
+        })
         .attr("x2", (d: any) => {
           // 시작점이 노드의 중심에 연결되도록 조정
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
           const length = Math.sqrt(dx * dx + dy * dy);
-          const offsetX = (dx / length) * 60;
+          const offsetX = dx * ((radius + 7) / (length == 0 ? 1 : length));
           return d.target.x - offsetX;
         })
         .attr("y2", (d: any) => {
@@ -243,21 +217,41 @@ const ErrorGraph = () => {
           const dx = d.target.x - d.source.x;
           const dy = d.target.y - d.source.y;
           const length = Math.sqrt(dx * dx + dy * dy);
-          const offsetY = (dy / length) * 60;
+          const offsetY = dy * ((radius + 7) / (length == 0 ? 1 : length));
           return d.target.y - offsetY;
         });
       node.attr("transform", (d: any) => `translate(${d.x}, ${d.y})`);
-      node.attr("cx", (d: any) => d.x).attr("cy", (d: any) => d.y);
+      node
+        .attr("cx", (d: any) => d.x)
+        .attr("cy", (d: any) => d.y)
+        .attr(
+          "cx",
+          (d: any) => (d.x = Math.max(radius, Math.min(width - radius, d.x!))),
+        )
+        .attr(
+          "cy",
+          (d: any) => (d.y = Math.max(radius, Math.min(height - radius, d.y!))),
+        );
     };
 
     const simulation = d3
       .forceSimulation(nodes)
       .force(
         "link",
-        d3.forceLink(links).id((d: any) => d.id),
+        d3.forceLink(links).id((d: any) => d.serviceId),
       )
-      .force("charge", d3.forceManyBody().strength(-3000))
-      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("charge", d3.forceManyBody().strength(-5000))
+      .force("center", d3.forceCenter(width / 2, height / 2 + 30))
+      .force(
+        "x",
+        d3.forceX().x((d) => Math.max(margin, Math.min(width - radius, d.x!))),
+      )
+      .force(
+        "y",
+        d3.forceY().y((d) => Math.max(margin, Math.min(height - radius, d.y!))),
+      )
+      .force("x", d3.forceX(width).strength(0.1)) // x축 위치 제한
+      .force("y", d3.forceY(height).strength(0.1)) // y축 위치 제한
       .on("tick", ticked);
 
     const dragstarted = (event: any) => {
@@ -283,44 +277,13 @@ const ErrorGraph = () => {
         .on("drag", dragged)
         .on("end", dragended),
     );
-    console.log(svgRef.current);
-    const arr = svgRef?.current?.querySelectorAll("g image");
+    const arr = svgRef?.current?.querySelectorAll("g circle.blur-circle");
     pjtRef.current = [...arr];
-
-    console.log(pjtRef.current);
-  };
-  const enterEvent = (e: React.KeyboardEvent): void => {
-    if (e.key == "Enter") {
-      submit();
-      setServiceName("");
-    }
   };
 
-  const submit = () => {
-    const idx = pjtRef.current.findIndex((node) => {
-      return node.getAttribute("pjt") === serviceName;
-    });
-
-    d3.select(pjtRef?.current[idx]).style("filter", "url(#error-shadow)");
-  };
   return (
-    <div className="flex">
-      <svg ref={svgRef} />
-      <div className="flex flex-col justify-center bg-red-100">
-        <div className="text-xl font-extrabold">
-          "input에 입력한 루돌프에서 에러가 발생!!"
-        </div>
-        <input
-          value={serviceName}
-          onChange={(e) => setServiceName(e.target.value)}
-          onKeyUp={(e) => {
-            enterEvent(e);
-          }}
-        />
-        <div className="rounded-lg bg-blue-500" onClick={submit}>
-          버튼!!!
-        </div>
-      </div>
+    <div className="flex h-full w-full">
+      <svg ref={svgRef} className="h-full w-full" />
     </div>
   );
 };

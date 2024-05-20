@@ -18,10 +18,17 @@ import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 
-import useEditorStore from "../store/useEditorStore";
 import { useDanger, useWarnning2 } from "../hooks/useComfirm";
 
 import CommentContainer from "../components/Comment/CommentContainer";
+import useEditorStore from "../store/useEditorStore";
+import useLinkStore from "../store/useLinkStore";
+
+interface User {
+  userId?: number;
+  profileImageUrl: string;
+  username: string;
+}
 
 
 interface ErrorInfo {
@@ -34,6 +41,7 @@ interface ErrorInfo {
 interface NoteDetail {
   noteId: number;
   title: string;
+  tags: string[];
   content: string;
   type: "ERROR" | "NORMAL";
   backlinkCount: number;
@@ -47,13 +55,24 @@ const MyNoteDetailPage = () => {
   const userId = parseInt(useParams().userId || "-1");
   const { showNote, noteType, isWriting, setShowNote, setNoteType } =
     useEditorStore();
+  const { setLinkTarget } = useLinkStore();
   const [note, setNote] = useState<NoteDetail | null>(null);
 
+  useEffect(() => {
+    if (noteId === -1) return;
+    localStorage.setItem("noteId", `${noteId}`);
+    setLinkTarget(noteId);
+    getNoteDetail();
+  }, [noteId]);
+
+  useEffect(() => {
+    if (note?.content == undefined) return;
+    editor?.commands.setContent(note?.content);
+  }, [note]);
 
   const getNoteDetail = async () => {
     try {
       const noteDetailData = await getNoteData(noteId);
-      console.log("잘들어옴", noteDetailData);
       setNote({ ...noteDetailData.response });
     } catch (error) {
       console.error("노트 상세 정보를 불러오는 중 오류가 발생했습니다:", error);
@@ -73,11 +92,13 @@ const MyNoteDetailPage = () => {
           if (!showNote) setShowNote();
           setNoteType("edit");
         }
-        return;
       } else {
         if (!showNote) setShowNote();
         setNoteType("edit");
       }
+    } else if (noteType == "link") {
+      if (!showNote) setShowNote();
+      setNoteType("edit");
     }
   };
 
@@ -89,7 +110,38 @@ const MyNoteDetailPage = () => {
 
     if (result) {
       noteDelete(noteId);
-      navigate("/omegi/myNote");
+      navigate(-1);
+    }
+  };
+
+  const handleExit = () => {
+    navigate(-1);
+  };
+
+  const hadleBackLink = async () => {
+    if ((noteType === "create" && isWriting) || noteType === "edit") {
+      const result = await useWarnning2({
+        title: "노트 연결로 이동하시겠습니까?",
+        fireText: "작성중인 노트는 저장되지 않습니다.",
+      });
+
+      if (result) {
+        if (!showNote) setShowNote();
+        setNoteType("link");
+      }
+      return;
+    } else if (noteType === "create") {
+      if (!showNote) {
+        setShowNote();
+      }
+      setNoteType("link");
+    } else {
+      if (showNote) {
+        setShowNote();
+        setTimeout(() => {
+          setNoteType("create");
+        }, 1000);
+      }
     }
 
   };
@@ -122,26 +174,6 @@ const MyNoteDetailPage = () => {
     },
   });
 
-  useEffect(() => {
-    if (noteId === -1) return;
-    localStorage.setItem("noteId", `${noteId}`);
-
-
-    const getNoteDetail = async () => {
-      try {
-        const noteDetailData = await getNoteData(noteId);
-        setNote(noteDetailData);
-      } catch (error) {
-        console.error(
-          "노트 상세 정보를 불러오는 중 오류가 발생했습니다:",
-          error,
-        );
-      }
-    };
-    //getNoteDetail();
-  }, [noteId]);
-
-
   return (
     <div className="bg-default">
       <div className="box-border flex h-full w-full flex-col rounded-xl  p-10 text-black">
@@ -153,23 +185,38 @@ const MyNoteDetailPage = () => {
               className="h-6 w-6"
             />
           </div>
-          <div className="ml-3 mt-7 flex items-center justify-start text-3xl font-bold">
+          <div className="ml-3 mt-4 box-border h-fit w-fit rounded-2xl border-2 border-primary-400 bg-primary-100 p-1 text-sm">
+            {note && note.type === "ERROR" ? <p>에러노트</p> : <p>일반노트</p>}
+          </div>
+          <div className="ml-3 mt-2 flex items-center justify-start text-3xl font-bold">
             <h2>{note?.title}</h2>
           </div>
-          <div className="text-md mr-5 box-border flex justify-end p-2 ">
-            <p className="mx-2">{note?.createdAt.split("T")[0]}</p>
-            <p
-              className="mx-2 text-gray-500 hover:cursor-pointer"
-              onClick={handleNoteEdit}
-            >
-              수정
-            </p>
-            <p
-              className="hover:cusor-pointer mx-2 text-red-400"
-              onClick={handleNoteDelete}
-            >
-              삭제
-            </p>
+          <div className="text-md ml-3 mr-5 mt-1 box-border flex justify-between p-2 ">
+            <div className="flex items-center">
+              {note?.tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="mr-3 rounded-3xl bg-green-100 px-4 py-1 font-light text-green-600 "
+                >
+                  {tag}
+                </div>
+              ))}
+            </div>
+            <div className="flex items-end">
+              <p className="mx-2">{note?.createdAt.split("T")[0]}</p>
+              <p
+                className="mx-2 text-gray-500 hover:cursor-pointer"
+                onClick={handleNoteEdit}
+              >
+                수정
+              </p>
+              <p
+                className="hover:cusor-pointer mx-2 text-red-400"
+                onClick={handleNoteDelete}
+              >
+                삭제
+              </p>
+            </div>
           </div>
         </div>
         <hr />
@@ -181,7 +228,7 @@ const MyNoteDetailPage = () => {
             />
             <br />
 
-            <div className="box-border">
+            {/* <div className="box-border">
               {note && note.type === "ERROR" ? (
                 <>
                   <hr />
@@ -194,14 +241,15 @@ const MyNoteDetailPage = () => {
               ) : (
                 <p></p>
               )}
-            </div>
+            </div> */}
           </div>
           <hr />
           <div className="box-border flex h-auto w-full p-3">
             <img
-              src="/public/icons/BacklinkIcon.png"
+              src="/icons/BacklinkIcon.png"
               alt="백링크"
-              className="h-5 w-5"
+              className="h-5 w-5 hover:cursor-pointer"
+              onClick={hadleBackLink}
             />
             <p className="ml-1 text-base">{note?.backlinkCount}개</p>
           </div>
