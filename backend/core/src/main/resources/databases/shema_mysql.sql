@@ -147,6 +147,21 @@ CREATE TABLE service
     foreign key (service_type_id) references service_type (service_type_id)
 );
 
+CREATE TABLE service_link
+(
+    service_link_id   INT       NOT NULL auto_increment,
+    service_id        int       not null,
+    linked_service_id int       not null,
+    created_at        TIMESTAMP NOT NULL default now(),
+    updated_at        TIMESTAMP NOT NULL default now() on update now(),
+    enabled           BOOLEAN   NOT NULL,
+    primary key (service_link_id),
+    foreign key (service_id) references service (service_id) on delete cascade ,
+    foreign key (linked_service_id) references service (service_id) on delete cascade,
+    constraint service_is_not_linked_service check ( service_id != linked_service_id ),
+    constraint linked_service_is_not_service check ( linked_service_id != service_id )
+);
+
 CREATE TABLE error
 (
     error_id   INT          NOT NULL auto_increment,
