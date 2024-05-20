@@ -181,6 +181,7 @@ const AllNoteDetailPage = () => {
                 <p></p>
               )}
             </div> */}
+
           </div>
           <hr />
           <div className="box-border flex h-auto w-full p-3">

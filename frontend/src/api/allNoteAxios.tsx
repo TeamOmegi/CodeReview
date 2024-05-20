@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
+
 const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
 // AllNoteList
@@ -18,6 +19,7 @@ interface Note {
   isMine: boolean;
   user: User;
   imageUrl: string;
+
 }
 
 export const getAllNoteList = async (keyword: string): Promise<any> => {
@@ -26,9 +28,11 @@ export const getAllNoteList = async (keyword: string): Promise<any> => {
     if (keyword.trim() !== "") {
       params = { keyword: keyword };
     }
+
     const response = await axiosInstance.get(`/notes/others`, {
       params,
     });
+
     return response.data.response;
   } catch (error) {
     console.error(error, "Fail getAllNoteList");

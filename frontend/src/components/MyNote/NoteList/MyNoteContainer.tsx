@@ -33,7 +33,6 @@ const MyNoteContainer = ({ selectedTag, showErrorOnly, type }: Props) => {
   const handleNoteClick = (note: MyNote) => {
     navigate(`/omegi/myNote/${note.noteId}`);
   };
-
   const handleNoteDelete = async (
     e: React.MouseEvent,
     noteId: number,

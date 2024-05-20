@@ -8,6 +8,7 @@ const App = () => {
   useEffect(() => {
     // useAutoAccessToken();
   }, []);
+
   return (
     <div>
       <RouterProvider router={router} fallbackElement={<p>Loading...</p>} />

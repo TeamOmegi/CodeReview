@@ -32,6 +32,7 @@ const AllNoteList = () => {
             onKeyUp={(e) => {
               if (e.key == "Enter") handleSearch();
             }}
+
             className="ml-2 h-full w-full bg-transparent text-sm text-gray-700 outline-none"
           />
           <img

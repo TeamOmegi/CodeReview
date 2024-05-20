@@ -18,6 +18,7 @@ export const getProjectList = async (): Promise<any> => {
 };
 
 interface Error {
+
   errorId: number;
   isSolved: boolean;
   errorType: string;
@@ -26,6 +27,7 @@ interface Error {
   time: string;
   pastNoteCount: number;
 }
+
 
 // 에러 리스트 가져오기
 export const getErrorList = async (

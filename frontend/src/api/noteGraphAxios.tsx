@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
+
 const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
 interface Node {
@@ -68,6 +69,7 @@ export const linkCreate = async (noteId: number, targetNoteId: number) => {
       targetNoteId: targetNoteId,
     });
     console.log(response.data);
+
     return response.data;
   } catch (error) {
     console.error("Fail linkCreate", error);
@@ -100,6 +102,7 @@ export const linkCheck = async (sourceNode: number, targetNode: number) => {
     });
     return response.data.response.linked;
   } catch (error) {
+
     console.error("Fail linkeDelete", error);
   }
 };

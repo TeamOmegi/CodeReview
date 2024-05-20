@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosInstance from "./axiosInstance";
 
+
 const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
 export const getCommentList = async (noteId: number): Promise<any> => {
@@ -33,6 +34,7 @@ export const updateComment = async (
   content: string,
 ) => {
   try {
+
     const response = await axiosInstance.put(
       `/notes/${noteId}/comments/${commentId}`,
       {
@@ -50,6 +52,7 @@ export const deleteComment = async (noteId: number, commentId: number) => {
   try {
     const response = await axiosInstance.delete(
       `/notes/${noteId}/comments/${commentId}`,
+
     );
     return response.data;
   } catch (error) {

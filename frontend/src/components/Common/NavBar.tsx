@@ -7,6 +7,7 @@ import axiosInstance from "../../api/axiosInstance";
 import Cookies from "js-cookie";
 import { fetchUserProfile } from "../../api/userAxios";
 
+
 const NavBar = () => {
   const [isClick, setIsClick] = useState<string>("");
   const location = useLocation();
@@ -16,6 +17,7 @@ const NavBar = () => {
   const { isNewError } = useErrorStore();
   const [profileName, setProfileName] = useState("");
   const [profileImage, setProfileImage] = useState("");
+
 
   const btnClick =
     "flex h-12 w-full items-center justify-start rounded-xl text-main-100 font-bold bg-gradient-to-r from-secondary-500 via-primary-500 to-primary-400 hover:cursor-pointer shadow shadow-primary-300 transition duration-100";
@@ -130,6 +132,7 @@ const NavBar = () => {
                 }
               />
               <span>대시보드</span>
+
               {isNewError && (
                 <span className="absolute  right-[-18px] top-[-2px] flex h-3 w-3">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75"></span>
