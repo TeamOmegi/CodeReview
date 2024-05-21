@@ -70,7 +70,9 @@ const ErrorGraph = ({ projectId }: Props) => {
       .append("clipPath")
       .attr("id", "circleClip")
       .append("circle")
+
       .attr("r", radius);
+
 
     //svg에 정의하는 코드 (svg 내에서 사용가능한 기능 만들어놓는다 생각하면됨)
     var defs = svg.append("defs");
@@ -129,6 +131,7 @@ const ErrorGraph = ({ projectId }: Props) => {
       .attr("result", "defaultBlurColor");
 
     //필터에 feOffset을 적용 (필터가 적용될 위치) .attr("dx" or "dy" 설정가능)
+
     shadowFilter
       .append("feOffset")
       .attr("in", "defaultBlurColor")
@@ -274,7 +277,6 @@ const ErrorGraph = ({ projectId }: Props) => {
         .on("drag", dragged)
         .on("end", dragended),
     );
-
     const arr = svgRef?.current?.querySelectorAll("g circle.blur-circle");
     pjtRef.current = [...arr];
   };

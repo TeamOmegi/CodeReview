@@ -10,6 +10,7 @@ export interface Note {
   links?: number[];
   createdAt?: string;
   imageUrl: string;
+
 }
 
 // 노트 전체조회 ("")
@@ -22,6 +23,7 @@ export const getAllMyNoteData = async (keyword: string): Promise<any> => {
     const response = await axiosInstance.get(`/notes/list`, {
       params,
       withCredentials: true,
+
     });
 
     return response.data;
@@ -34,6 +36,7 @@ export const getAllMyNoteData = async (keyword: string): Promise<any> => {
 export const getNoteData = async (noteId: number): Promise<any> => {
   try {
     const response = await axiosInstance.get(`/notes/${noteId}`);
+
     return response.data;
   } catch (error) {
     console.error(error, "Fail getNoteData");
@@ -45,6 +48,7 @@ export const getAllTags = async (): Promise<any> => {
   try {
     const response = await axiosInstance.get(`/tags`);
     //console.log(response, "Success AllTags");
+
     return response.data;
   } catch (error) {
     console.error(error, "Fail AllTags");
@@ -56,6 +60,7 @@ export const noteCreate = async (noteData: Note) => {
   try {
     const response = await axiosInstance.post(`/notes`, noteData);
     // console.log(response, "Success NoteCreate");
+
   } catch (error) {
     console.error(error, "Fail NoteCreate");
   }
@@ -63,6 +68,7 @@ export const noteCreate = async (noteData: Note) => {
 
 // 노트 수정
 export const noteEdit = async (noteId: number, noteData: Note) => {
+
   try {
     const response = await axiosInstance.patch(`/notes/${noteId}`, noteData);
     // console.log(response, "Success NoteEdit");
@@ -73,9 +79,11 @@ export const noteEdit = async (noteId: number, noteData: Note) => {
 
 // 노트 삭제
 export const noteDelete = async (noteId: number) => {
+
   try {
     const response = await axiosInstance.delete(`/notes/${noteId}`);
     //console.log(response, "Success NoteDelete");
+
   } catch (error) {
     console.error(error, "Fail NoteDelete");
   }

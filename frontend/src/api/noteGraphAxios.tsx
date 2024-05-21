@@ -65,6 +65,7 @@ export const linkCreate = async (noteId: number, targetNoteId: number) => {
       targetNoteId: targetNoteId,
     });
     console.log(response.data);
+
     return response.data;
   } catch (error) {
     console.error("Fail linkCreate", error);
@@ -97,6 +98,7 @@ export const linkCheck = async (sourceNode: number, targetNode: number) => {
     });
     return response.data.response.linked;
   } catch (error) {
+
     console.error("Fail linkeDelete", error);
   }
 };

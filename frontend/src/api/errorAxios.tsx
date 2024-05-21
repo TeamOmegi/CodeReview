@@ -14,6 +14,7 @@ export const getProjectList = async (): Promise<any> => {
   }
 };
 
+
 // 에러 리스트 가져오기
 export const getErrorList = async (project: string, solved: boolean) => {
   try {

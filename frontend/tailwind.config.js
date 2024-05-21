@@ -38,6 +38,7 @@ module.exports = {
           200: "#F5F5F5",
         },
       },
+
       boxShadow: {
         "text-glow": "0 0 10px rgba(255, 255, 255, 0.8)",
       },
@@ -82,6 +83,7 @@ module.exports = {
   },
   plugins: [
     require("tailwind-scrollbar-hide"),
+
     function ({ addUtilities }) {
       const newUtilities = {
         ".scrollbar-webkit": {

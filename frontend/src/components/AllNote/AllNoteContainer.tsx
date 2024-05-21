@@ -1,7 +1,9 @@
+
 import { useNavigate } from "react-router-dom";
 import { useDanger } from "../../hooks/useComfirm";
 import { noteDelete } from "../../api/myNoteAxios";
 import useALLNoteStore from "../../store/useAllNoteStore";
+
 
 interface AllNote {
   noteId: number;
@@ -43,6 +45,7 @@ const AllNoteContainer = () => {
       navigate(`/omegi/myNote/${note.noteId}`);
     } else {
       navigate(`/omegi/allNote/${note.noteId}`);
+
     }
   };
 

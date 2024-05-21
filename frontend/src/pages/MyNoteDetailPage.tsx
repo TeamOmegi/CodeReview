@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+
 import { useNavigate, useParams } from "react-router-dom";
+
 import { getNoteData, noteDelete } from "../api/myNoteAxios";
 import { EditorContent, useEditor } from "@tiptap/react";
 
@@ -17,6 +19,7 @@ import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
 
 import { useDanger, useWarnning2 } from "../hooks/useComfirm";
+
 import CommentContainer from "../components/Comment/CommentContainer";
 import useEditorStore from "../store/useEditorStore";
 import useLinkStore from "../store/useLinkStore";
@@ -26,6 +29,7 @@ interface User {
   profileImageUrl: string;
   username: string;
 }
+
 
 interface ErrorInfo {
   errorId: number;
@@ -74,6 +78,7 @@ const MyNoteDetailPage = () => {
       console.error("노트 상세 정보를 불러오는 중 오류가 발생했습니다:", error);
     }
   };
+
 
   const handleNoteEdit = async () => {
     if (noteType === "create") {
@@ -138,6 +143,7 @@ const MyNoteDetailPage = () => {
         }, 1000);
       }
     }
+
   };
 
   lowlight.registerLanguage("html", html);
