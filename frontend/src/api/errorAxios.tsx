@@ -1,7 +1,4 @@
-import axios from "axios";
 import axiosInstance from "./axiosInstance";
-
-const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
 interface Project {
   projectId: number;
@@ -17,24 +14,9 @@ export const getProjectList = async (): Promise<any> => {
   }
 };
 
-interface Error {
-
-  errorId: number;
-  isSolved: boolean;
-  errorType: string;
-  project: string;
-  service: string;
-  time: string;
-  pastNoteCount: number;
-}
-
 
 // 에러 리스트 가져오기
-export const getErrorList = async (
-  project: string,
-  service: string,
-  solved: boolean,
-) => {
+export const getErrorList = async (project: string, solved: boolean) => {
   try {
     const params = { project: project, solved: solved };
     if (solved !== null) {
@@ -49,16 +31,6 @@ export const getErrorList = async (
 };
 
 // 에러 상세 조회
-interface ErrorDetail {
-  type: string;
-  summary: string;
-  log: string;
-  trace: string[];
-  time: string;
-  projectId: number;
-  serviceId: number;
-  noteId: number;
-}
 
 export const getErrorDetail = async (errorId: number): Promise<any> => {
   try {

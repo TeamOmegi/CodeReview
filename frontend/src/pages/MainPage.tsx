@@ -16,8 +16,7 @@ interface Error {
 }
 const MainPage = () => {
   const { showNote, noteType, setShowNote } = useEditorStore();
-  const { isNewError, setErrorCreate, setIsNewError, setErrorMap } =
-    useErrorStore();
+  const { setErrorCreate, setIsNewError, setErrorMap } = useErrorStore();
   const location = useLocation();
 
   useEffect(() => {
@@ -30,11 +29,7 @@ const MainPage = () => {
       const errorData: Error = JSON.parse(event.data); // 서버에서 받은 데이터 파싱
       setErrorCreate(errorData);
       setErrorMap(errorData.serviceId, "up");
-      if (location.pathname === "/omegi/" || location.pathname === "/omegi") {
-        setIsNewError(false);
-      } else {
-        setIsNewError(true);
-      }
+      handleNewError();
     });
 
     eventSource.onerror = () => {
@@ -61,11 +56,14 @@ const MainPage = () => {
     }
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (location.pathname !== "/omegi/" && location.pathname !== "/omegi") {
-      if (!isNewError) setIsNewError(true);
+  const handleNewError = () => {
+    console.log("비상!! 비상!!", location.pathname);
+    if (location.pathname === "/omegi/" || location.pathname === "/omegi") {
+      setIsNewError(false);
+    } else {
+      setIsNewError(true);
     }
-  }, [isNewError]);
+  };
 
   return (
     <div className="flex h-svh w-screen overflow-hidden bg-main-100">

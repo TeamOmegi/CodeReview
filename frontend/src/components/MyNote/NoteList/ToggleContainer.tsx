@@ -1,13 +1,11 @@
-import React from "react";
-
-const ToggleContainer = ({ setViewType, viewType }) => {
+const ToggleContainer = ({ setViewType, viewType }: any) => {
   return (
     <label className="shadow-card relative inline-flex cursor-pointer select-none items-center justify-center rounded-3xl p-1">
       <input
         type="checkbox"
         className="sr-only"
         onChange={() =>
-          setViewType((prevViewType) =>
+          setViewType((prevViewType: any) =>
             prevViewType === "list" ? "list" : "graph",
           )
         }

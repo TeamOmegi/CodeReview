@@ -1,7 +1,4 @@
-import axios from "axios";
 import axiosInstance from "./axiosInstance";
-
-const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
 // ErrorSummary
 interface ErrorSummary {

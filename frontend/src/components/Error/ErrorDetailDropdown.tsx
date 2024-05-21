@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Span } from "../../api/errorAxios.tsx";
 
 // [NEW] 에러 디테일 페이지 컴포넌트
 // 에러 데이터 형식에 trace 부분 표시
 // 표시할 데이터가 많이서 드롭다운으로 해둠
 
-const ErrorDropdown = ({ span }: { span: Span }) => {
+const ErrorDropdown = ({ span }: { span: any }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const toggleDropdown = () => {

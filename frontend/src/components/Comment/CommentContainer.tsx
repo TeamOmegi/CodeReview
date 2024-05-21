@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CommentList from "./CommentList";
 import { createComment, getCommentList } from "../../api/commentAxios";
 import CommentForm from "./CommentForm";

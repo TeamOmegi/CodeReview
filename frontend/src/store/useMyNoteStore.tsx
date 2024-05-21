@@ -28,7 +28,7 @@ const useMyNoteStore = create<Store>()((set) => ({
         note.content = useContentParser(note.content);
         return note;
       });
-      return { noteList: [...notes] };
+      return { noteList: notes };
     }),
   setNoteCreate: (note) =>
     set((state) => ({ noteList: [note, ...state.noteList] })),
@@ -36,7 +36,7 @@ const useMyNoteStore = create<Store>()((set) => ({
     set((state) => {
       const notes = [...state.noteList];
       if (index < notes.length) notes.splice(index, 1);
-      return { noteList: [...notes] };
+      return { noteList: notes };
     }),
 }));
 

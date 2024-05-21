@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const ErrorSwitch = ({ onClick }) => {
+const ErrorSwitch = ({ onClick }: any) => {
   const [enabled, setEnabled] = useState(false);
 
   const handleClick = () => {

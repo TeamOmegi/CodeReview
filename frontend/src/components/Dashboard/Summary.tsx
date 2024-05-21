@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { getErrorSummary, getNoteSummary } from "../../api/dashboardAxios";
 import useErrorStore from "../../store/useErrorStore";
 

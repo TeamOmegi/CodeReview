@@ -19,6 +19,7 @@ interface Store {
   allNoteList: AllNote[];
   setAllNoteCreate: (note: AllNote) => void;
   setAllNoteList: (notes: AllNote[]) => void;
+  setAllNoteDelete: (index: number) => void;
 }
 
 const useALLNoteStore = create<Store>()((set) => ({
@@ -34,6 +35,12 @@ const useALLNoteStore = create<Store>()((set) => ({
     }),
   setAllNoteCreate: (note) =>
     set((state) => ({ allNoteList: [note, ...state.allNoteList] })),
+  setAllNoteDelete: (index) =>
+    set((state) => {
+      const notes = [...state.allNoteList];
+      if (index < notes.length) notes.splice(index, 1);
+      return { allNoteList: notes };
+    }),
 }));
 
 export default useALLNoteStore;

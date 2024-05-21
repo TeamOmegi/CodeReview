@@ -1,6 +1,6 @@
 import useErrorStore from "../../store/useErrorStore";
 import { getErrorSolved } from "../../api/projectAxios";
-import { useQuestion, useWarnning } from "../../hooks/useComfirm";
+import { useQuestion } from "../../hooks/useComfirm";
 
 interface Error {
   errorId: number;

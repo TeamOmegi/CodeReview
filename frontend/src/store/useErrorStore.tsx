@@ -13,7 +13,7 @@ interface Error {
 
 interface Store {
   errorList: Error[];
-  isNewError: boolean;
+  isNewError: { isTrue: boolean };
   errorMap: Map<number, number>;
   errorUpdate: {
     type: string;
@@ -27,7 +27,7 @@ interface Store {
 
 const useErrorStore = create<Store>()((set) => ({
   errorList: [],
-  isNewError: false,
+  isNewError: { isTrue: false },
   errorMap: new Map(),
   errorUpdate: {
     type: "",
@@ -43,7 +43,7 @@ const useErrorStore = create<Store>()((set) => ({
       errorList: [...errorArr],
       errorUpdate: { type: "delete", toggle: !state.errorUpdate.toggle },
     })),
-  setIsNewError: (isError) => set(() => ({ isNewError: isError })),
+  setIsNewError: (isError) => set(() => ({ isNewError: { isTrue: isError } })),
   setErrorMap: (serviceId, type) =>
     set((state) => {
       let errorCount = state.errorMap.get(serviceId) || 0;

@@ -3,11 +3,6 @@ import ErrorGraph from "./ErrorGraph";
 import ProjectSelect from "../Setting/ProjectSelect";
 import { getProjectNames } from "../../api/projectAxios";
 
-interface Project {
-  id: number;
-  name: string;
-}
-
 interface ProjectName {
   projectId: number;
   name: string;

@@ -1,8 +1,4 @@
-import axios from "axios";
 import axiosInstance from "./axiosInstance";
-
-
-const BASE_URL = "http://k10a308.p.ssafy.io:8081";
 
 interface Node {
   nodeId: number;
@@ -26,7 +22,7 @@ export const getGraphData = async (): Promise<{
   links: Link[];
 } | null> => {
   try {
-    const response = await axiosInstance.get<GraphData>(`/notes/graph`);
+    const response = await axiosInstance.get(`/notes/graph`);
     const Nodes: Node[] = response.data.response.nodes.map(
       (node: {
         nodeId: number;

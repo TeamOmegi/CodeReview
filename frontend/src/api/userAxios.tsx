@@ -1,5 +1,4 @@
 import axiosInstance from "./axiosInstance";
-import Cookies from "js-cookie";
 
 export const fetchUserProfile = async () => {
   try {
