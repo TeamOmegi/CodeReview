@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.Builder;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -25,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "user")
 @EntityListeners(AuditingEntityListener.class)
 @Getter
+@Builder
 @NoArgsConstructor(access = PROTECTED)
 public class User {
 
@@ -48,4 +51,16 @@ public class User {
 
 	@OneToMany(mappedBy = "user")
 	private List<Note> notes = new ArrayList<>();
+
+	public User(Integer userId, String username, String repositoryToken, String repositoryUrl, String profileImageUrl, LocalDateTime createdAt, LocalDateTime updatedAt, boolean deleted, List<Note> notes) {
+		this.userId = userId;
+		this.username = username;
+		this.repositoryToken = repositoryToken;
+		this.repositoryUrl = repositoryUrl;
+		this.profileImageUrl = profileImageUrl;
+		this.createdAt = createdAt;
+		this.updatedAt = updatedAt;
+		this.deleted = deleted;
+		this.notes = notes;
+	}
 }

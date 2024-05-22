@@ -25,28 +25,26 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 public class ServiceToken {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer serviceTokenId;
+	@Id
+	@GeneratedValue(strategy = IDENTITY)
+	private Integer serviceTokenId;
 
-    private String name;
+	private String name;
 
-    private String token;
+	private String token;
 
-    private boolean activated;
+	private boolean activated;
 
-    @CreatedDate
-    private LocalDateTime createdAt;
+	@CreatedDate
+	private LocalDateTime createdAt;
 
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
+	@LastModifiedDate
+	private LocalDateTime updatedAt;
 
-    @Builder
-    private ServiceToken(String name, String token, boolean activated) {
-        this.name = name;
-        this.token = token;
-        this.activated = activated;
-    }
+	@Builder
+	private ServiceToken(String name, String token, boolean activated) {
+		this.name = name;
+		this.token = token;
+		this.activated = activated;
+	}
 }
-
-
