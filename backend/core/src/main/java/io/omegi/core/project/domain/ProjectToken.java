@@ -6,6 +6,7 @@ import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 
+import lombok.Builder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -46,4 +47,13 @@ public class ProjectToken {
 
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
+	@Builder
+	public ProjectToken(Project project, String name, String token, boolean activated) {
+		this.project = project;
+		this.name = name;
+		this.token = token;
+		this.activated = activated;
+		this.createdAt = LocalDateTime.now();
+		this.updatedAt = LocalDateTime.now();
+	}
 }
