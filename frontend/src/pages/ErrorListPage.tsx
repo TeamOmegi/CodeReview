@@ -68,7 +68,7 @@ const ErrorListPage = () => {
         <Header title="🐛 에러 리스트"></Header>
         <div className="mx-2 flex h-full w-full items-center justify-between">
           <div className="flex h-full w-full items-center">
-            <div className="mx-2 flex text-base font-medium text-main-100 text-opacity-40">
+            <div className="mx-2 flex h-full items-center text-base font-medium text-main-100 text-opacity-40">
               PROJECT
             </div>
             <CustomPjtSelect

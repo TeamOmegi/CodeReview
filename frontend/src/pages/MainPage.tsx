@@ -57,7 +57,7 @@ const MainPage = () => {
   }, [location.pathname]);
 
   const handleNewError = () => {
-    console.log("비상!! 비상!!", location.pathname);
+    // 클로저 상태 문제 해결할것
     if (location.pathname === "/omegi/" || location.pathname === "/omegi") {
       setIsNewError(false);
     } else {
