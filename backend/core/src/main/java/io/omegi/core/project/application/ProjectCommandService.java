@@ -127,11 +127,11 @@ public class ProjectCommandService {
 
 	}
 	public DeleteServiceTokenResponseDto deleteServiceToken(DeleteServiceTokenRequestDto requestDto) {
-		io.omegi.core.project.domain.Service service = serviceRepository.findById(requestDto.serviceId())
+		io.omegi.core.project.domain.Service service = serviceRepository.findById(requestDto.serviceTokenId())
 				.orElseThrow(RuntimeException::new);
 		ServiceToken serviceToken = service.getServiceToken();
 		serviceTokenRepository.delete(serviceToken);
-		return new DeleteServiceTokenResponseDto(requestDto.serviceId());
+		return new DeleteServiceTokenResponseDto(requestDto.serviceTokenId());
 	}
 
 	public GetAllServiceTokenFromProjectResponse getAllServiceTokenFromProject(Integer userId, Integer projectId) {
