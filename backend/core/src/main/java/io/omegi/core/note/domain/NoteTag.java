@@ -1,6 +1,7 @@
 package io.omegi.core.note.domain;
 
 import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 public class NoteTag {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = IDENTITY)
 	private Integer noteTagId;
 
 	@ManyToOne(fetch = LAZY)

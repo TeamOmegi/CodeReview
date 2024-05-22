@@ -1,5 +1,6 @@
 package io.omegi.core.project.domain;
 
+import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 import jakarta.persistence.Entity;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class ServiceType {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = IDENTITY)
 	private Integer serviceTypeId;
 
 	private String name;

@@ -9,8 +9,8 @@ public record SaveNoteRequest(
 	@NotBlank String title,
 	@NotBlank String content,
 	@NotNull List<String> tags,
-	@NotBlank String type,
+	@NotBlank String type, // todo
 	@NotBlank String visibility,
-	@NotNull List<Integer> links
+	@NotNull List<Integer> links // todo
 ) {
 }

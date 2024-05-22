@@ -7,7 +7,6 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record EditNoteRequest(
-	@Positive Integer noteId,
 	@NotBlank String title,
 	@NotBlank String content,
 	@NotNull List<String> tags,

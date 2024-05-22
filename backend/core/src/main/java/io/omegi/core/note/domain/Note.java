@@ -1,33 +1,27 @@
 package io.omegi.core.note.domain;
 
-import static jakarta.persistence.EnumType.*;
 import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import io.omegi.core.project.domain.Error;
 import io.omegi.core.user.domain.User;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.SecondaryTable;
-import jakarta.persistence.SecondaryTables;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,16 +29,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "note")
-@SecondaryTables({
-	@SecondaryTable(name = "note_type", pkJoinColumns = @PrimaryKeyJoinColumn(name = "note_type_id")),
-	@SecondaryTable(name = "note_visibility", pkJoinColumns = @PrimaryKeyJoinColumn(name = "note_visibility_id"))
-})
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Note {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = IDENTITY)
 	private Integer noteId;
 
 	@ManyToOne(fetch = LAZY)
@@ -58,13 +49,13 @@ public class Note {
 	@OneToMany(mappedBy = "note")
 	List<NoteTag> noteTags = new ArrayList<>();
 
-	@Column(table = "note_type")
-	@Enumerated(STRING)
-	private NoteType type;
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "note_type_id")
+	private NoteType noteType;
 
-	@Column(table = "note_visibility")
-	@Enumerated(STRING)
-	private NoteVisibility visibility;
+	@ManyToOne(fetch = LAZY)
+	@JoinColumn(name = "note_visibility_id")
+	private NoteVisibility noteVisibility;
 
 	@CreatedDate
 	private LocalDateTime createdAt;
@@ -75,25 +66,36 @@ public class Note {
 	private Integer backlinkCount;
 
 	@OneToMany(mappedBy = "note")
-	private final Collection<Link> links = new HashSet<>();
+	private final List<Link> links = new ArrayList<>();
 
-	@OneToOne(fetch = LAZY, mappedBy = "note")
+	@OneToOne(fetch = LAZY, mappedBy = "note") // todo: LAZY not working
 	private Error error;
 
 	@Builder
-	private Note(String title, String content, NoteType type, NoteVisibility visibility) {
+	private Note(User user, String title, String content, NoteType noteType, NoteVisibility noteVisibility) {
+		this.user = user;
 		this.title = title;
 		this.content = content;
-		this.type = type;
-		this.visibility = visibility;
+		this.noteType = noteType;
+		this.noteVisibility = noteVisibility;
 		this.backlinkCount = 0;
 	}
 
-	public void edit(String title, String content, NoteType type, NoteVisibility visibility) {
+	public void edit(String title, String content, NoteType noteType, NoteVisibility noteVisibility) {
 		this.title = title;
 		this.content = content;
-		this.type = type;
-		this.visibility = visibility;
+		this.noteType = noteType;
+		this.noteVisibility = noteVisibility;
+	}
+
+	public void linkNote() {
+		// todo
+		this.backlinkCount++;
+	}
+
+	public void unlinkNote() {
+		// todo
+		this.backlinkCount--;
 	}
 
 	public boolean isLinkedTo(Note note) {
@@ -103,6 +105,6 @@ public class Note {
 	}
 
 	public boolean isPublic() {
-		return NoteVisibility.PUBLIC == this.visibility;
+		return this.noteVisibility.isPublic();
 	}
 }

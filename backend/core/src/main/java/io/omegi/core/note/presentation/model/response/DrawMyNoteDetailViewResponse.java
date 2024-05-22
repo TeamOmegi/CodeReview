@@ -1,4 +1,4 @@
-package io.omegi.core.note.application.dto.response;
+package io.omegi.core.note.presentation.model.response;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -6,23 +6,23 @@ import java.util.List;
 import lombok.Builder;
 
 @Builder
-public record NoteDetailResponseDto(
+public record DrawMyNoteDetailViewResponse(
 	Integer noteId,
 	String title,
 	String content,
-	List<String> tagNames,
-	String noteType,
-	String noteVisibility,
+	List<String> tags,
+	String type,
+	String visibility,
 	Integer backlinkCount,
 	LocalDateTime createdAt,
-	RelatedErrorResponseDto relatedError
+	RelatedErrorResponse error
 ) {
 	@Builder
-	public record RelatedErrorResponseDto(
+	public record RelatedErrorResponse(
 		Integer errorId,
 		String errorType,
 		String summary,
 		boolean solved
-	) {
+		) {
 	}
 }

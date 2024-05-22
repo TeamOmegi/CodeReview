@@ -1,5 +1,6 @@
 package io.omegi.core.project.presentation.controller;
 
+import static io.omegi.core.common.presentation.wrapper.WrappedResponseStatus.*;
 import static org.springframework.http.HttpStatus.*;
 
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.omegi.core.common.annotation.Login;
+import io.omegi.core.common.annotation.ResponseWrapping;
 import io.omegi.core.project.application.ProjectCommandService;
 import io.omegi.core.project.presentation.model.request.CreateProjectRequest;
 import io.omegi.core.project.presentation.model.request.EditProjectRequest;
@@ -31,8 +33,9 @@ public class ProjectController {
 
 	private final ProjectCommandService projectCommandService;
 
-	@PostMapping("/")
+	@PostMapping
 	@ResponseStatus(CREATED)
+	@ResponseWrapping(status = SAVE_PROJECT_SUCCESS)
 	public CreateProjectResponse createProject(@Login Integer userId, @RequestBody CreateProjectRequest request) {
 		CreateProjectRequestDto requestDto = new CreateProjectRequestDto(userId, request.name());
 		CreateProjectResponseDto responseDto = projectCommandService.createProject(requestDto);
@@ -41,6 +44,7 @@ public class ProjectController {
 
 	@PatchMapping("/{projectId}")
 	@ResponseStatus(OK)
+	@ResponseWrapping(status = EDIT_PROJECT_SUCCESS)
 	public EditProjectResponse editProject(@Login Integer userId, @PathVariable Integer projectId,
 										   @RequestBody EditProjectRequest request) {
 		EditProjectRequestDto requestDto = new EditProjectRequestDto(userId, projectId, request.name());
@@ -50,6 +54,7 @@ public class ProjectController {
 
 	@DeleteMapping("/{projectId}")
 	@ResponseStatus(NO_CONTENT)
+	@ResponseWrapping(status = DELETE_PROJECT_SUCCESS)
 	public DeleteProjectResponse deleteProject(@Login Integer userId, @PathVariable Integer projectId) {
 		DeleteProjectRequestDto requestDto = new DeleteProjectRequestDto(userId, projectId);
 		DeleteProjectResponseDto responseDto = projectCommandService.deleteProject(requestDto);

@@ -1,11 +1,14 @@
 package io.omegi.core.note.application;
 
+import java.util.List;
+
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.omegi.core.note.application.dto.request.AttachTagsRequestDto;
 import io.omegi.core.note.application.dto.request.SaveTagRequestDto;
+import io.omegi.core.note.application.dto.request.UpdateTagsRequestDto;
 import io.omegi.core.note.application.event.UnknownTagQueriedEvent;
 import io.omegi.core.note.application.exception.NoteNotFoundException;
 import io.omegi.core.note.application.exception.TagNotFoundException;
@@ -63,5 +66,37 @@ public class TagCommandService {
 
 	public void detachTags() {
 
+	}
+
+	public void updateTags(UpdateTagsRequestDto requestDto) {
+		Note note = noteRepository.findById(requestDto.noteId())
+			.orElseThrow(NoteNotFoundException::new);
+
+		List<NoteTag> noteTags = note.getNoteTags();
+
+		for (NoteTag noteTag : noteTags) {
+			Tag tag = noteTag.getTag();
+			if (!requestDto.tagNames().contains(tag.getName())) {
+				noteTagRepository.delete(noteTag);
+			} else {
+				requestDto.tagNames().remove(tag.getName());
+			}
+		}
+
+		for (String tagName : requestDto.tagNames()) { // todo: publish event
+			if (!tagRepository.existsByName(tagName)) {
+				eventPublisher.publishEvent(new UnknownTagQueriedEvent(tagName)); // todo: 동시에 같은 태그가 저장 시도된 경우?
+			}
+
+			Tag tag = tagRepository.findByName(tagName)
+				.orElseThrow(TagNotFoundException::new);
+
+			NoteTag noteTag = NoteTag.builder()
+				.note(note)
+				.tag(tag)
+				.build();
+
+			noteTagRepository.save(noteTag);
+		}
 	}
 }

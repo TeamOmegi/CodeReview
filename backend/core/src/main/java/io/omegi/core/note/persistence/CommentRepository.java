@@ -13,5 +13,5 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
 
 	Slice<Comment> findCommentsByNote(Pageable pageable, Note note);
 
-	List<Comment> findAllByNote(Note note);
+	List<Comment> findAllByNoteOrderByCreatedAtAsc(Note note);
 }

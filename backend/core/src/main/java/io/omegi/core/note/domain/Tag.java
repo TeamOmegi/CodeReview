@@ -1,5 +1,6 @@
 package io.omegi.core.note.domain;
 
+import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 import jakarta.persistence.Entity;
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class Tag {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = IDENTITY)
 	private Integer tagId;
 
 	private String name;

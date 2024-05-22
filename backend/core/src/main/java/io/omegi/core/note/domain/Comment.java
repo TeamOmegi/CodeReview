@@ -1,16 +1,19 @@
 package io.omegi.core.note.domain;
 
 import static jakarta.persistence.FetchType.*;
+import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.util.StringUtils;
 
 import io.omegi.core.user.domain.User;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -22,12 +25,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "comment")
+@EntityListeners(AuditingEntityListener.class)
 @Getter
 @NoArgsConstructor(access = PROTECTED)
 public class Comment {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy = IDENTITY)
 	private Integer commentId;
 
 	@ManyToOne(fetch = LAZY)

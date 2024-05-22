@@ -1,19 +1,21 @@
 package io.omegi.core.common.annotation;
 
+import static io.omegi.core.common.presentation.wrapper.WrappedResponseStatus.*;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import io.omegi.core.common.presentation.response.RestResponseStatus;
+import io.omegi.core.common.presentation.wrapper.WrappedResponseStatus;
 
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RestResponseWrapping {
+public @interface ResponseWrapping {
 
-	int code();
+	int code() default 5000;
 
 	String message() default "";
 
-	RestResponseStatus status();
+	WrappedResponseStatus status() default NULL;
 }

@@ -1,5 +1,6 @@
 package io.omegi.core.note.presentation.controller;
 
+import static io.omegi.core.common.presentation.wrapper.WrappedResponseStatus.*;
 import static org.springframework.http.HttpStatus.*;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.omegi.core.common.annotation.Login;
+import io.omegi.core.common.annotation.ResponseWrapping;
 import io.omegi.core.note.application.CommentCommandService;
 import io.omegi.core.note.application.dto.request.DeleteCommentRequestDto;
 import io.omegi.core.note.application.dto.request.EditCommentRequestDto;
@@ -33,8 +35,9 @@ public class CommentController {
 
 	private final CommentCommandService commentCommandService;
 
-	@PostMapping("/")
+	@PostMapping
 	@ResponseStatus(CREATED)
+	@ResponseWrapping(status = SAVE_COMMENT_SUCCESS)
 	public RegisterCommentResponse registerComment(@Login Integer userId, @PathVariable Integer noteId,
 		@RequestBody RegisterCommentRequest request) {
 		RegisterCommentRequestDto requestDto = new RegisterCommentRequestDto(userId, noteId, request.content());
@@ -44,6 +47,7 @@ public class CommentController {
 
 	@PatchMapping("/{commentId}")
 	@ResponseStatus(OK)
+	@ResponseWrapping(status = EDIT_COMMENT_SUCCESS)
 	public EditCommentResponse editComment(@Login Integer userId, @PathVariable Integer noteId,
 		@PathVariable Integer commentId, @RequestBody EditCommentRequest request) {
 		EditCommentRequestDto requestDto = new EditCommentRequestDto(userId, noteId, commentId, request.content());
@@ -53,6 +57,7 @@ public class CommentController {
 
 	@DeleteMapping("/{commentId}")
 	@ResponseStatus(NO_CONTENT)
+	@ResponseWrapping(status = DELETE_COMMENT_SUCCESS)
 	public DeleteCommentResponse deleteComment(@Login Integer userId, @PathVariable Integer noteId,
 		@PathVariable Integer commentId) {
 		DeleteCommentRequestDto requestDto = new DeleteCommentRequestDto(userId, noteId, commentId);

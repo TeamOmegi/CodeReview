@@ -1,12 +1,7 @@
 package io.omegi.core.note.application;
 
-import static org.springframework.data.domain.Sort.Direction.*;
-
 import java.util.List;
 
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,7 +29,7 @@ public class CommentQueryService {
 			throw new RuntimeException();
 		}
 
-		List<Comment> comments = commentRepository.findAllByNote(note);
+		List<Comment> comments = commentRepository.findAllByNoteOrderByCreatedAtAsc(note);
 
 		List<DrawCommentsViewResponse.CommentResponse> commentInfos = comments.stream()
 			.map(comment -> {
