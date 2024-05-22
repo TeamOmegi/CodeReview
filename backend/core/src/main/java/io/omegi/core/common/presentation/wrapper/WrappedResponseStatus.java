@@ -25,6 +25,7 @@ public enum WrappedResponseStatus {
 	DRAW_ERRORS_VIEW_SUCCESS(2010, "errors view is successfully drawn"),
 	DRAW_ERROR_SUMMARY_VIEW_SUCCESS(2011, "error summary view is successfully drawn"),
 	DRAW_IS_LINKED_VIEW_SUCCESS(2012, "is linked view is successfully drawn"),
+	DRAW_PROJECTS_VIEW_SUCCESS(2013, "projects view is successfully drawn"),
 
 	SAVE_NOTE_SUCCESS(2101, "note is successfully saved"),
 	EDIT_NOTE_SUCCESS(2102, "note is successfully edited"),
@@ -37,6 +38,7 @@ public enum WrappedResponseStatus {
 	SAVE_PROJECT_SUCCESS(2109, "project is successfully created"),
 	EDIT_PROJECT_SUCCESS(2110, "project is successfully edited"),
 	DELETE_PROJECT_SUCCESS(2111, "project is successfully deleted"),
+	MARK_ERROR_SOLVED_SUCCESS(2112, "error is successfully marked as solved"),
 
 	DRAW_MY_PROFILE_VIEW_SUCCESS(2201, "userProfile is successfully drawn"),
 	LOGOUT_MY_USER_SUCCESS(2202,"userProfile is logout"),

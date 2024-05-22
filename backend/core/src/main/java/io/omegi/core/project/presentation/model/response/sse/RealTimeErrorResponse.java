@@ -7,12 +7,10 @@ import lombok.Builder;
 @Builder
 public record RealTimeErrorResponse(
 	Integer errorId,
-	Integer userId,
-	Integer noteId,
 	Integer serviceId,
 	Integer projectId,
+	boolean solved,
 	String type,
-	String summary,
 	LocalDateTime time
 ) {
 }

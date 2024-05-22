@@ -84,7 +84,7 @@ public class LinkCommandService {
 				throw new RuntimeException(); // todo
 			}
 
-			linkRepository.deleteByLinkedNote(linkedNote);
+			linkRepository.deleteByNoteAndLinkedNote(note, linkedNote);
 			linkedNote.unlinkNote();
 			unlinkedNoteIds.add(linkedNoteId);
 		}

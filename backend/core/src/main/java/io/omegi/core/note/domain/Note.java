@@ -1,6 +1,5 @@
 package io.omegi.core.note.domain;
 
-import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.FetchType.*;
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
@@ -66,7 +65,7 @@ public class Note {
 
 	private Integer backlinkCount;
 
-	@OneToMany(mappedBy = "note", cascade = ALL)
+	@OneToMany(mappedBy = "note")
 	private final List<Link> links = new ArrayList<>();
 
 	@OneToOne(fetch = LAZY, mappedBy = "note") // todo: LAZY not working

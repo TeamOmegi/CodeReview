@@ -40,7 +40,7 @@ public class NoteUiController {
 	@ResponseWrapping(status = DRAW_MY_NOTE_LIST_VIEW_SUCCESS)
 	public DrawMyNoteListViewResponse drawMyNoteListView(@Login Integer userId,
 		@RequestParam(required = false) String keyword, @RequestParam(required = false) String tag) {
-		return noteQueryService.drawMyNoteListView(userId, keyword, tag);
+		return noteQueryService.drawMyNoteListView(userId, keyword, null);
 	}
 
 	@GetMapping("/graph")

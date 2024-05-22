@@ -28,7 +28,7 @@ public class NoteRepositoryImpl implements CustomNoteRepository {
 		BooleanExpression tagEq = tagName == null ? null : noteTag.tag.name.eq(tagName);
 
 		return queryFactory.selectFrom(note)
-			.join(note.noteTags, noteTag)
+			.leftJoin(note.noteTags, noteTag).fetchJoin()
 			.where(note.user.eq(user), titleLike, tagEq)
 			.orderBy(note.createdAt.desc())
 			.fetch();

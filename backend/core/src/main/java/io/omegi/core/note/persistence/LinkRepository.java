@@ -10,7 +10,8 @@ import io.omegi.core.user.domain.User;
 
 public interface LinkRepository extends JpaRepository<Link, Integer> {
 
-	void deleteByLinkedNote(Note linkedNote);
+	void deleteByNoteAndLinkedNote(Note note, Note linkedNote);
+
 
 	boolean existsByNoteAndLinkedNote(Note note, Note linkedNote);
 
