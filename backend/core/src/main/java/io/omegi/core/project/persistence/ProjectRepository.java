@@ -10,7 +10,11 @@ import io.omegi.core.user.domain.User;
 
 public interface ProjectRepository extends JpaRepository<Project, Integer> {
 
-	Optional<Project> findByName(String name);
+	Optional<Project> findByUserAndName(User user, String name);
+
+	boolean existsByUserAndName(User user, String name);
 
 	List<Project> findAllByUser(User user);
+
+	Optional<Project> findByUserAndProjectId(User user, Integer projectId);
 }

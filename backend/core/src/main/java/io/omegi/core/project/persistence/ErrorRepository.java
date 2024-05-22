@@ -18,6 +18,6 @@ public interface ErrorRepository extends JpaRepository<Error, Integer>, CustomEr
 	@Query("select e from Error e join e.service s join s.project p join p.user u where u = :user order by e.createdAt desc limit 1")
 	Optional<Error> findTopByUserOrderByCreatedAt(@Param("user") User user);
 
-	@Query("select e from Error e join e.service s join s.project p join p.user u where u = :user and e.solved = false order by e.createdAt desc")
+	@Query("select e from Error e join e.service s join s.project p join p.user u where u = :user and e.solved = false order by e.createdAt asc")
 	List<Error> findUnsolvedErrors(@Param("user") User user);
 }

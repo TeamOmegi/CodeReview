@@ -22,5 +22,5 @@ public class ServiceType {
 
 	private String name;
 
-	private String image_url;
+	private String imageUrl;
 }

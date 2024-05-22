@@ -2,6 +2,7 @@ package io.omegi.core.user.presentation.controller;
 
 import io.omegi.core.auth.application.refresh.RefreshTokenService;
 import io.omegi.core.auth.jwt.JwtUtil;
+import io.omegi.core.common.annotation.Login;
 import io.omegi.core.common.annotation.ResponseWrapping;
 import io.omegi.core.user.application.UserService;
 import io.omegi.core.user.presentation.model.response.DrawUserProfileResponse;
@@ -29,20 +30,22 @@ public class UserController {
     @GetMapping("/profile")
     @ResponseStatus(OK)
     @ResponseWrapping(status = DRAW_MY_PROFILE_VIEW_SUCCESS)
-    public DrawUserProfileResponse drawUserProfileResponse(HttpServletRequest request) {
-        String accessToken = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("access".equals(cookie.getName())) {
-                    accessToken = cookie.getValue();
-                    break;
-                }
-            }
-        }
-        if (accessToken == null) {
-            throw new RuntimeException("Authorization token is missing or malformed");
-        }
-        Integer userId = jwtUtil.getUserId(accessToken);
+    public DrawUserProfileResponse drawUserProfileResponse(@Login Integer userId) {
+//        String accessToken = null;
+//        if (request.getCookies() != null) {
+//            for (Cookie cookie : request.getCookies()) {
+//                if ("access".equals(cookie.getName())) {
+//                    accessToken = cookie.getValue();
+//                    break;
+//                }
+//            }
+//        }
+//        if (accessToken == null) {
+//            throw new RuntimeException("Authorization token is missing or malformed");
+//        }
+//        Integer userId = jwtUtil.getUserId(accessToken);
+//        return userService.drawUserProfile(userId);
+//        Integer userId = 1; // 임시로 userId를 1로 고정
         return userService.drawUserProfile(userId);
     }
 

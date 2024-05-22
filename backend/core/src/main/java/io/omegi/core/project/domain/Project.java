@@ -1,10 +1,13 @@
 package io.omegi.core.project.domain;
 
+import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.FetchType.*;
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,6 +21,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,10 +50,17 @@ public class Project {
 	@LastModifiedDate
 	private LocalDateTime updatedAt;
 
+	@OneToMany(mappedBy = "project", cascade = ALL)
+	private final List<Service> services = new ArrayList<>();
+
 	@Builder
 	private Project(User user, String name) {
 		this.user = user;
 		this.name = name;
+	}
+
+	public void addService(Service service) {
+		this.services.add(service);
 	}
 
 	public void editName(String name) {

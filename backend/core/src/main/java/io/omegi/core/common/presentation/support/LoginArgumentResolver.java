@@ -8,9 +8,14 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import io.omegi.core.auth.Oauth2.CustomOAuth2User;
 import io.omegi.core.common.annotation.Login;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
+
+	private final Integer userId;
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {
@@ -24,11 +29,13 @@ public class LoginArgumentResolver implements HandlerMethodArgumentResolver {
 	public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
 		NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
-		Login login = parameter.getParameterAnnotation(Login.class);
+		// Login login = parameter.getParameterAnnotation(Login.class);
 
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		// Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		// CustomOAuth2User principal = (CustomOAuth2User)authentication.getPrincipal();
+		//
+		// return principal.getUserId();
 
-
-		return 1; // todo
+		return userId;
 	}
 }

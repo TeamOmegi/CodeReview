@@ -26,13 +26,17 @@ public class SseEmitterManager {
 		sseEmitter.onCompletion(callback);
 		// sseEmitter.onError();
 
-		sendEvent(sseEmitter, "temp id", initialEventName, initialEventData);
+		sendEvent(sseEmitter, sseEmitterId.toString(), initialEventName, initialEventData);
 		sseEmitterStore.put(sseEmitterId, sseEmitter);
 
 		return sseEmitter;
 	}
 
 	private SseEmitter get(Integer sseEmitterId) {
+		if (!sseEmitterStore.containsKey(sseEmitterId)) {
+			throw new SseFailedException("No SSE connection");
+		}
+
 		return sseEmitterStore.get(sseEmitterId);
 	}
 
@@ -46,8 +50,12 @@ public class SseEmitterManager {
 	}
 
 	public void sendEvent(Integer sseEmitterId, String id, String name, Object data) {
-		SseEmitter sseEmitter = get(sseEmitterId);
-		sendEvent(sseEmitter, id, name, data);
+		SseEmitter sseEmitter = null;
+		try {
+			sseEmitter = get(sseEmitterId);
+			sendEvent(sseEmitter, id, name, data);
+		} catch (Exception e) {
+		}
 	}
 
 	private void sendEvent(SseEmitter sseEmitter, String id, String name, Object data) {

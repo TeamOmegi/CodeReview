@@ -9,7 +9,9 @@ import io.omegi.core.common.exception.AccessDeniedException;
 import io.omegi.core.note.application.dto.request.DrawErrorsViewRequestDto;
 import io.omegi.core.note.domain.Note;
 import io.omegi.core.project.domain.Error;
+import io.omegi.core.project.domain.ErrorLog;
 import io.omegi.core.project.domain.Project;
+import io.omegi.core.project.persistence.ErrorLogRepository;
 import io.omegi.core.project.persistence.ErrorRepository;
 import io.omegi.core.project.persistence.ProjectRepository;
 import io.omegi.core.project.presentation.model.response.DrawErrorDetailViewResponse;
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class ErrorQueryService {
 
 	private final ErrorRepository errorRepository;
+	private final ErrorLogRepository errorLogRepository;
 	private final ProjectRepository projectRepository;
 	private final UserRepository userRepository;
 
@@ -37,26 +40,45 @@ public class ErrorQueryService {
 		User user = project.getUser();
 
 		if (!user.getUserId().equals(userId)) {
-			throw new AccessDeniedException(); // todo
+			throw new AccessDeniedException(userId, null);
 		}
+
+		ErrorLog errorLog = errorLogRepository.findById(error.getMongoId())
+			.orElseThrow(RuntimeException::new);
+
+		List<DrawErrorDetailViewResponse.TraceResponse> traceResponses = errorLog.getTraces().stream()
+			.map(trace -> DrawErrorDetailViewResponse.TraceResponse.builder()
+				.spanId(trace.getSpanId())
+				.parentSpanId(trace.getParentSpanId())
+				.serviceName(trace.getServiceName())
+				.name(trace.getName())
+				.kind(trace.getKind())
+				.attributes(trace.getAttributes())
+				.enterTime(trace.getEnterTime())
+				.exitTime(trace.getExitTime())
+				.build())
+			.toList();
 
 		Note note = error.getNote();
 
 		return DrawErrorDetailViewResponse.builder()
+			.type(error.getType())
 			.summary(error.getSummary())
-			.log("") // todo
+			.log(errorLog.getLog())
+			.trace(traceResponses)
+			.time(error.getTime())
+			.projectId(project.getProjectId())
+			.serviceId(service.getServiceId())
 			.noteId(note != null ? note.getNoteId() : -1)
 			.build();
 	}
 
 	public DrawErrorsViewResponse drawErrorsView(DrawErrorsViewRequestDto requestDto) {
-		Project project = projectRepository.findByName(requestDto.projectName())
+		User user = userRepository.findById(requestDto.userId())
 			.orElseThrow(RuntimeException::new);
 
-		User user = project.getUser();
-		if (!user.getUserId().equals(requestDto.userId())) {
-			throw new AccessDeniedException();
-		}
+		Project project = projectRepository.findByUserAndName(user, requestDto.projectName())
+			.orElseThrow(RuntimeException::new);
 
 		List<Error> errors = errorRepository.searchErrors(requestDto.projectName(), requestDto.serviceName(),
 			requestDto.solved(), requestDto.errorType());

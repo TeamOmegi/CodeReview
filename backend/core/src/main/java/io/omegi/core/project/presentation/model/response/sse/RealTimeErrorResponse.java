@@ -9,6 +9,8 @@ public record RealTimeErrorResponse(
 	Integer errorId,
 	Integer serviceId,
 	Integer projectId,
+	String serviceName,
+	String projectName,
 	boolean solved,
 	String type,
 	LocalDateTime time

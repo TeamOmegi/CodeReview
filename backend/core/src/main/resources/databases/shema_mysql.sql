@@ -16,9 +16,9 @@ CREATE TABLE user
 (
     user_id           INT          NOT NULL auto_increment,
     username          VARCHAR(255) NOT NULL unique,
-    repository_token  VARCHAR(255) NULL DEFAULT null,
-    repository_url    VARCHAR(255) NULL DEFAULT null,
-    profile_image_url VARCHAR(255) NULL default null,
+    repository_token  VARCHAR(255) NULL     DEFAULT null,
+    repository_url    VARCHAR(255) NULL     DEFAULT null,
+    profile_image_url VARCHAR(255) NULL     default null,
     created_at        TIMESTAMP    NOT NULL default now(),
     updated_at        TIMESTAMP    NOT NULL default now() on update now(),
     deleted           BOOLEAN      NOT NULL DEFAULT false,
@@ -79,8 +79,7 @@ CREATE TABLE link
     primary key (link_id),
     foreign key (note_id) references note (note_id) on delete cascade,
     foreign key (linked_note_id) references note (note_id) on delete cascade,
-    constraint note_is_not_linked_note check ( note_id != linked_note_id
-) ,
+    constraint note_is_not_linked_note check ( note_id != linked_note_id ),
     constraint linked_note_is_not_note check ( linked_note_id != note_id )
 );
 
@@ -179,7 +178,7 @@ CREATE TABLE service_link
 CREATE TABLE error
 (
     error_id   INT          NOT NULL auto_increment,
-    note_id    INT NULL,
+    note_id    INT          NULL,
     service_id INT          NOT NULL,
     type       VARCHAR(255) NOT NULL,
     summary    TEXT         NOT NULL,
