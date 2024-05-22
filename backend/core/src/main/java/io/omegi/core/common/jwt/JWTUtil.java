@@ -1,30 +1,50 @@
-package io.omegi.core.common.jwt;
+package io.omegi.core.auth.jwt;
 
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
+import java.security.Key;
 import java.util.Date;
 
 @Component
-public class JWTUtil {
-    private static final String SECRET_KEY = "z0kX7DbwoLyvmUM1evYnXB6kZhBQfT02ASD25fR2512SElei";
+public class JwtUtil {
 
-    public String createJwtForService(Integer projectId, Integer serviceId) {
-        byte[] secretKeyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
-        byte[] decoded = Base64.getDecoder().decode(secretKeyBytes);
-        SecretKey key = Keys.hmacShaKeyFor(decoded);
+    private Key key;
 
-        Date now = new Date();
+    public JwtUtil(@Value("${spring.jwt.secret.auth}")String secret) {
+
+        byte[] byteSecretKey = Decoders.BASE64.decode(secret);
+        key = Keys.hmacShaKeyFor(byteSecretKey);
+    }
+    public String getCategory(String token) {
+
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("category", String.class);
+    }
+
+
+    public Integer getUserId(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("userId", Integer.class);
+    }
+
+    public Boolean isExpired(String token) {
+
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
+    }
+
+    public String createJwt(String category, Integer userId, Long expiredMs) {
+        Claims claims = Jwts.claims();
+        claims.put("userId", userId);
+        claims.put("category", category);
 
         return Jwts.builder()
-                .claim("projectId", projectId)
-                .claim("serviceId", serviceId)
-                .setIssuedAt(now)
+                .setClaims(claims)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
+
 }
